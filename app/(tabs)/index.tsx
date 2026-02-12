@@ -8,6 +8,7 @@ import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import Animated, { FadeInDown, FadeInRight, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { useTheme } from '@/lib/useTheme';
+import { useAuth } from '@/lib/AuthContext';
 import { useHabits } from '@/lib/habits-context';
 import { useFonts, Nunito_600SemiBold, Nunito_700Bold, Nunito_800ExtraBold, Nunito_400Regular } from '@expo-google-fonts/nunito';
 
@@ -93,8 +94,16 @@ function HabitCard({
   );
 }
 
+function getFirstName(user: { user_metadata?: { full_name?: string } } | null): string {
+  const name = user?.user_metadata?.full_name?.trim();
+  if (!name) return '';
+  const first = name.split(/\s+/)[0];
+  return first || '';
+}
+
 export default function TodayScreen() {
   const { theme, isDark, palette } = useTheme();
+  const { user } = useAuth();
   const {
     habits, getHabitsForDate, isCompleted, toggleCompletion, getStreak,
     getCompletedCount, deleteHabit, error, refetch,
@@ -115,6 +124,9 @@ export default function TodayScreen() {
     if (h < 18) return 'Boa tarde';
     return 'Boa noite';
   }, []);
+
+  const firstName = useMemo(() => getFirstName(user), [user]);
+  const greetingText = firstName ? `${greeting}, ${firstName}` : greeting;
 
   const handleToggle = useCallback(async (habitId: string) => {
     if (Platform.OS !== 'web') {
@@ -164,7 +176,7 @@ export default function TodayScreen() {
           <View style={styles.header}>
             <View>
               <Text style={[styles.greeting, { color: theme.textSecondary, fontFamily: 'Nunito_600SemiBold' }]}>
-                {greeting}
+                {greetingText}
               </Text>
               <Text style={[styles.title, { color: theme.text, fontFamily: 'Nunito_800ExtraBold' }]}>
                 Seus habitos

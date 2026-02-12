@@ -18,7 +18,10 @@ const SPLASH_BG = "#120b2d";
 function LoadingSplash() {
   return (
     <View style={[StyleSheet.absoluteFill, styles.splash]}>
-      <Text style={styles.splashTitle}>HabitFlow</Text>
+      <View style={styles.splashContent}>
+        <Text style={styles.splashTitle}>HabitFlow</Text>
+      </View>
+      <Text style={styles.splashFooter}>By "@filipeivopereira"</Text>
     </View>
   );
 }
@@ -84,11 +87,21 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   splash: {
     backgroundColor: SPLASH_BG,
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  splashContent: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
   splashTitle: {
     color: "#ffffff",
     fontSize: 14,
+  },
+  splashFooter: {
+    color: "rgba(255,255,255,0.7)",
+    fontSize: 12,
+    marginBottom: 24,
   },
 });

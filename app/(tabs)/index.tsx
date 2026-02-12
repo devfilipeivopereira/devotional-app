@@ -97,7 +97,7 @@ export default function TodayScreen() {
   const { theme, isDark, palette } = useTheme();
   const {
     habits, getHabitsForDate, isCompleted, toggleCompletion, getStreak,
-    getCompletedCount, deleteHabit,
+    getCompletedCount, deleteHabit, error, refetch,
   } = useHabits();
   const insets = useSafeAreaInsets();
   const [fontsLoaded] = useFonts({ Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold, Nunito_800ExtraBold });
@@ -147,6 +147,20 @@ export default function TodayScreen() {
         contentContainerStyle={{ paddingBottom: 100 }}
       >
         <View style={{ paddingTop: (Platform.OS !== 'web' ? insets.top : webTopInset) + 16 }}>
+          {error && (
+            <Pressable
+              onPress={() => refetch()}
+              style={[styles.errorBanner, { backgroundColor: palette.coral + '20', borderColor: palette.coral }]}
+            >
+              <Ionicons name="warning-outline" size={20} color={palette.coral} />
+              <Text style={[styles.errorText, { color: theme.text, fontFamily: 'Nunito_600SemiBold' }]}>
+                {error}
+              </Text>
+              <Text style={[styles.errorRetry, { color: palette.coral, fontFamily: 'Nunito_600SemiBold' }]}>
+                Tentar novamente
+              </Text>
+            </Pressable>
+          )}
           <View style={styles.header}>
             <View>
               <Text style={[styles.greeting, { color: theme.textSecondary, fontFamily: 'Nunito_600SemiBold' }]}>
@@ -311,4 +325,16 @@ const styles = StyleSheet.create({
   },
   emptyTitle: { fontSize: 20, marginTop: 8 },
   emptyText: { fontSize: 14, textAlign: 'center', lineHeight: 20 },
+  errorBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginHorizontal: 16,
+    marginBottom: 12,
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  errorText: { flex: 1, fontSize: 13 },
+  errorRetry: { fontSize: 13 },
 });

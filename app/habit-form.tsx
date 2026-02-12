@@ -32,7 +32,7 @@ export default function HabitFormScreen() {
   const { theme, isDark, palette, habitColors } = useTheme();
   const { habits, addHabit, updateHabit, deleteHabit } = useHabits();
   const insets = useSafeAreaInsets();
-  const params = useLocalSearchParams<{ id?: string }>();
+  const params = useLocalSearchParams<{ id?: string; from?: string }>();
   const [fontsLoaded] = useFonts({ Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold });
 
   const editingHabit = useMemo(() => {
@@ -105,12 +105,20 @@ export default function HabitFormScreen() {
     }
   };
 
+  const goBackAfterDelete = () => {
+    if (params.from === 'stats') {
+      router.replace('/(tabs)/stats');
+    } else {
+      router.back();
+    }
+  };
+
   const handleDelete = () => {
     if (!editingHabit) return;
     if (Platform.OS === 'web') {
       if (confirm(`Excluir "${editingHabit.name}"?`)) {
         deleteHabit(editingHabit.id);
-        router.back();
+        goBackAfterDelete();
       }
       return;
     }
@@ -121,7 +129,7 @@ export default function HabitFormScreen() {
         style: 'destructive',
         onPress: () => {
           deleteHabit(editingHabit.id);
-          router.back();
+          goBackAfterDelete();
         },
       },
     ]);

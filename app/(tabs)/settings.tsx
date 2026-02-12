@@ -146,6 +146,12 @@ export default function SettingsScreen() {
             </Pressable>
           </>
         )}
+
+        <View style={styles.footer}>
+          <Text style={[styles.footerText, { color: theme.textSecondary }]}>
+            © Filipe Ivo Pereira
+          </Text>
+        </View>
       </ScrollView>
     </View>
   );
@@ -173,4 +179,14 @@ const styles = StyleSheet.create({
   optionLabel: { flex: 1, fontSize: 16 },
   sectionTitle: { fontSize: 20, marginHorizontal: 20, marginTop: 32, marginBottom: 12 },
   logout: { marginHorizontal: 20 },
+  footer: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 32,
+    marginTop: 24,
+  },
+  footerText: {
+    fontSize: 12,
+    fontFamily: "Nunito_400Regular",
+  },
 });

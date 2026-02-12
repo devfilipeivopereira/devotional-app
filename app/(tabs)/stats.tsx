@@ -419,7 +419,7 @@ export default function StatsScreen() {
                   return (
                     <Pressable
                       key={habit.id}
-                      onPress={() => router.push({ pathname: '/habit-detail', params: { id: habit.id } })}
+                      onPress={() => router.push({ pathname: '/habit-detail', params: { id: habit.id, from: 'stats' } })}
                       style={[styles.habitStatCard, { backgroundColor: theme.card }]}
                     >
                       <View style={styles.habitStatHeader}>

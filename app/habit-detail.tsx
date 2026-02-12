@@ -59,7 +59,7 @@ export default function HabitDetailScreen() {
   const { theme, isDark, palette } = useTheme();
   const { habits, completions, isCompleted, toggleCompletion, getStreak, getCompletionRate } = useHabits();
   const insets = useSafeAreaInsets();
-  const params = useLocalSearchParams<{ id: string }>();
+  const params = useLocalSearchParams<{ id: string; from?: string }>();
   const [viewMode, setViewMode] = useState<ViewMode>('weekly');
   const [fontsLoaded] = useFonts({ Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold, Nunito_800ExtraBold });
 
@@ -211,7 +211,7 @@ export default function HabitDetailScreen() {
         <Text style={[styles.topTitle, { color: theme.text, fontFamily: 'Nunito_700Bold' }]} numberOfLines={1}>
           {habit.name}
         </Text>
-        <Pressable onPress={() => router.push({ pathname: '/habit-form', params: { id: habit.id } })} hitSlop={12}>
+        <Pressable onPress={() => router.push({ pathname: '/habit-form', params: { id: habit.id, from: params.from } })} hitSlop={12}>
           <Ionicons name="create-outline" size={24} color={theme.textSecondary} />
         </Pressable>
       </View>

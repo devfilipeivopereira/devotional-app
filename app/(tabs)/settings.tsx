@@ -9,8 +9,11 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { router } from "expo-router";
 import { useTheme } from "@/lib/useTheme";
 import type { ThemePreference } from "@/lib/ThemeContext";
+import { useAuth } from "@/lib/AuthContext";
+import { isSupabaseConfigured } from "@/lib/supabase";
 import {
   useFonts,
   Nunito_600SemiBold,
@@ -25,7 +28,8 @@ const OPTIONS: { value: ThemePreference; label: string; icon: keyof typeof Ionic
 ];
 
 export default function SettingsScreen() {
-  const { theme, isDark, palette, preference, setThemePreference } = useTheme();
+  const { theme, palette, preference, setThemePreference } = useTheme();
+  const { user, signOut } = useAuth();
   const insets = useSafeAreaInsets();
   const [fontsLoaded] = useFonts({
     Nunito_400Regular,
@@ -114,6 +118,34 @@ export default function SettingsScreen() {
             );
           })}
         </View>
+
+        {isSupabaseConfigured && user && (
+          <>
+            <Text
+              style={[
+                styles.sectionTitle,
+                { color: theme.text, fontFamily: "Nunito_700Bold" },
+              ]}
+            >
+              Conta
+            </Text>
+            <Pressable
+              onPress={async () => {
+                await signOut();
+                router.replace("/(auth)");
+              }}
+              style={[styles.option, styles.logout, { backgroundColor: theme.card }]}
+            >
+              <View style={[styles.optionIcon, { backgroundColor: palette.coral + "18" }]}>
+                <Ionicons name="log-out-outline" size={22} color={palette.coral} />
+              </View>
+              <Text style={[styles.optionLabel, { color: palette.coral, fontFamily: "Nunito_600SemiBold" }]}>
+                Sair
+              </Text>
+              <Ionicons name="chevron-forward" size={20} color={theme.textSecondary} />
+            </Pressable>
+          </>
+        )}
       </ScrollView>
     </View>
   );
@@ -139,4 +171,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   optionLabel: { flex: 1, fontSize: 16 },
+  sectionTitle: { fontSize: 20, marginHorizontal: 20, marginTop: 32, marginBottom: 12 },
+  logout: { marginHorizontal: 20 },
 });

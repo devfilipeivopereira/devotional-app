@@ -55,7 +55,11 @@ npm run supabase:migrate
 | `habits` | id, name, color, icon, frequency, custom_days, reminder, created_at |
 | `habit_completions` | id, habit_id, date (unique por habit_id + date) |
 
-RLS está ativado com políticas que permitem leitura e escrita para o role anon. Para multi-utilizador no futuro, adicione `user_id` em `habits` e ajuste as políticas.
+**Autenticação (por usuário):** depois da migração inicial, execute a segunda migração para associar hábitos ao utilizador e ativar RLS por conta:
+
+- Ficheiro: `supabase/migrations/20250212100000_habitflow_auth_user_id.sql`
+
+Ela adiciona `user_id` em `habits`, remove as políticas “allow all” e cria políticas que filtram por `auth.uid()`. Cada utilizador só vê e edita os próprios hábitos e conclusões. O app usa **Supabase Auth** (cadastro com nome e e-mail, login com e-mail e senha) e exige login quando o Supabase está configurado.
 
 ---
 

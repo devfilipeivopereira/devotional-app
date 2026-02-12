@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+import { useAuth } from "@/lib/AuthContext";
 
 export interface Habit {
   id: string;
@@ -93,6 +94,7 @@ function mapRowToCompletion(row: {
 }
 
 export function HabitsProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
   const [habits, setHabits] = useState<Habit[]>([]);
   const [completions, setCompletions] = useState<HabitCompletion[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -101,6 +103,12 @@ export function HabitsProvider({ children }: { children: ReactNode }) {
   const loadData = useCallback(async () => {
     setError(null);
     if (isSupabaseConfigured) {
+      if (!user) {
+        setHabits([]);
+        setCompletions([]);
+        setIsLoading(false);
+        return;
+      }
       try {
         const [habitsRes, completionsRes] = await Promise.all([
           supabase.from("habits").select("*").order("created_at", { ascending: true }),
@@ -131,7 +139,7 @@ export function HabitsProvider({ children }: { children: ReactNode }) {
         setIsLoading(false);
       }
     }
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     loadData();
@@ -140,9 +148,11 @@ export function HabitsProvider({ children }: { children: ReactNode }) {
   const addHabit = useCallback(
     async (habitData: Omit<Habit, "id" | "createdAt">) => {
       if (isSupabaseConfigured) {
+        if (!user) throw new Error("Usuário não autenticado");
         const { data, error: err } = await supabase
           .from("habits")
           .insert({
+            user_id: user.id,
             name: habitData.name,
             color: habitData.color,
             icon: habitData.icon,
@@ -165,7 +175,7 @@ export function HabitsProvider({ children }: { children: ReactNode }) {
         await AsyncStorage.setItem(HABITS_KEY, JSON.stringify(updated));
       }
     },
-    [habits]
+    [habits, user]
   );
 
   const updateHabit = useCallback(

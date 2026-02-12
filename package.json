@@ -14,7 +14,8 @@
     "supabase:migrate": "node scripts/run-supabase-migration.js",
     "start": "npx expo start",
     "lint": "npx expo lint",
-    "lint:fix": "npx expo lint --fix"
+    "lint:fix": "npx expo lint --fix",
+    "build:apk": "eas build --platform android --profile preview"
   },
   "dependencies": {
     "@expo-google-fonts/nunito": "^0.4.2",

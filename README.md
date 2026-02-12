@@ -131,6 +131,7 @@ habit-tracker/
 
 - [Supabase — configuração e migração](docs/SUPABASE.md)
 - [Guia de desenvolvimento](docs/DESENVOLVIMENTO.md)
+- [Gerar APK (Android)](docs/BUILD-APK.md)
 
 ---
 

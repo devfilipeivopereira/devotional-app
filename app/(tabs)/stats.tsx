@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Platform, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
 import { useTheme } from '@/lib/useTheme';
 import { useHabits } from '@/lib/habits-context';
 import { useFonts, Nunito_600SemiBold, Nunito_700Bold, Nunito_400Regular } from '@expo-google-fonts/nunito';
@@ -416,7 +417,11 @@ export default function StatsScreen() {
                   const periodDays = viewMode === 'weekly' ? 7 : viewMode === 'monthly' ? 30 : 365;
                   const rate = getCompletionRate(habit.id, periodDays);
                   return (
-                    <View key={habit.id} style={[styles.habitStatCard, { backgroundColor: theme.card }]}>
+                    <Pressable
+                      key={habit.id}
+                      onPress={() => router.push({ pathname: '/habit-detail', params: { id: habit.id } })}
+                      style={[styles.habitStatCard, { backgroundColor: theme.card }]}
+                    >
                       <View style={styles.habitStatHeader}>
                         <View style={[styles.habitIcon, { backgroundColor: habit.color + '20' }]}>
                           <Ionicons name={habit.icon as any} size={20} color={habit.color} />
@@ -424,6 +429,7 @@ export default function StatsScreen() {
                         <Text style={[styles.habitStatName, { color: theme.text, fontFamily: 'Nunito_600SemiBold' }]}>
                           {habit.name}
                         </Text>
+                        <Ionicons name="chevron-forward" size={18} color={theme.textSecondary} />
                       </View>
                       <View style={styles.habitStatRow}>
                         <View style={styles.habitStatItem}>
@@ -438,7 +444,7 @@ export default function StatsScreen() {
                       <View style={styles.progressBar}>
                         <View style={[styles.progressFill, { width: `${rate}%`, backgroundColor: habit.color }]} />
                       </View>
-                    </View>
+                    </Pressable>
                   );
                 })}
               </Animated.View>

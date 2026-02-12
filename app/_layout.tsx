@@ -21,6 +21,12 @@ function RootLayoutNav() {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="habit-detail"
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 }

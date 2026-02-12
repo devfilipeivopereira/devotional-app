@@ -149,6 +149,10 @@ export function HabitsProvider({ children }: { children: ReactNode }) {
     async (habitData: Omit<Habit, "id" | "createdAt">) => {
       if (isSupabaseConfigured) {
         if (!user) throw new Error("Usuário não autenticado");
+        const customDaysPayload =
+          habitData.frequency === "custom"
+            ? (habitData.customDays && habitData.customDays.length > 0 ? habitData.customDays : null)
+            : null;
         const { data, error: err } = await supabase
           .from("habits")
           .insert({
@@ -157,7 +161,7 @@ export function HabitsProvider({ children }: { children: ReactNode }) {
             color: habitData.color,
             icon: habitData.icon,
             frequency: habitData.frequency,
-            custom_days: habitData.customDays ?? null,
+            custom_days: customDaysPayload,
             reminder: habitData.reminder ?? null,
           })
           .select()
@@ -184,18 +188,24 @@ export function HabitsProvider({ children }: { children: ReactNode }) {
       updates: Partial<Omit<Habit, "id" | "createdAt">>
     ) => {
       if (isSupabaseConfigured) {
+        const updatePayload: Record<string, unknown> = {};
+        if (updates.name !== undefined) updatePayload.name = updates.name;
+        if (updates.color !== undefined) updatePayload.color = updates.color;
+        if (updates.icon !== undefined) updatePayload.icon = updates.icon;
+        if (updates.frequency !== undefined) {
+          updatePayload.frequency = updates.frequency;
+          updatePayload.custom_days =
+            updates.frequency === "custom" && updates.customDays && updates.customDays.length > 0
+              ? updates.customDays
+              : null;
+        } else if (updates.customDays !== undefined) {
+          updatePayload.custom_days = updates.customDays;
+        }
+        if (updates.reminder !== undefined) updatePayload.reminder = updates.reminder;
+
         const { error: err } = await supabase
           .from("habits")
-          .update({
-            ...(updates.name !== undefined && { name: updates.name }),
-            ...(updates.color !== undefined && { color: updates.color }),
-            ...(updates.icon !== undefined && { icon: updates.icon }),
-            ...(updates.frequency !== undefined && { frequency: updates.frequency }),
-            ...(updates.customDays !== undefined && {
-              custom_days: updates.customDays,
-            }),
-            ...(updates.reminder !== undefined && { reminder: updates.reminder }),
-          })
+          .update(updatePayload)
           .eq("id", id);
         if (err) throw err;
         setHabits((prev) =>

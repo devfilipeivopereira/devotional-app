@@ -68,28 +68,41 @@ export default function HabitFormScreen() {
       return;
     }
 
+    if (frequency === 'custom' && customDays.length === 0) {
+      if (Platform.OS === 'web') {
+        alert('Selecione pelo menos um dia em Personalizado');
+      } else {
+        Alert.alert('Erro', 'Selecione pelo menos um dia em Personalizado');
+      }
+      return;
+    }
+
     if (Platform.OS !== 'web') {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     }
 
-    if (editingHabit) {
-      await updateHabit(editingHabit.id, {
+    try {
+      const payload = {
         name: name.trim(),
         color,
         icon,
         frequency,
         customDays: frequency === 'custom' ? customDays : undefined,
-      });
-    } else {
-      await addHabit({
-        name: name.trim(),
-        color,
-        icon,
-        frequency,
-        customDays: frequency === 'custom' ? customDays : undefined,
-      });
+      };
+      if (editingHabit) {
+        await updateHabit(editingHabit.id, payload);
+      } else {
+        await addHabit(payload);
+      }
+      router.back();
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Nao foi possivel salvar o habito';
+      if (Platform.OS === 'web') {
+        alert(msg);
+      } else {
+        Alert.alert('Erro ao salvar', msg);
+      }
     }
-    router.back();
   };
 
   const handleDelete = () => {
@@ -175,7 +188,7 @@ export default function HabitFormScreen() {
         <View style={styles.section}>
           <Text style={[styles.label, { color: theme.textSecondary, fontFamily: 'Nunito_600SemiBold' }]}>COR</Text>
           <View style={styles.colorGrid}>
-            {habitColors.map(c => (
+            {habitColors.map((c: string) => (
               <Pressable
                 key={c}
                 onPress={() => setColor(c)}

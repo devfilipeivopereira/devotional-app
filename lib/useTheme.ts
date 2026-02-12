@@ -26,6 +26,6 @@ export function useTheme() {
     palette: Colors.palette,
     habitColors: Colors.habitColors,
     preference: "system" as const,
-    setThemePreference: async () => {},
+    setThemePreference: async (_p: "light" | "dark" | "system") => {},
   };
 }

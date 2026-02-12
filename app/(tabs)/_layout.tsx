@@ -12,19 +12,19 @@ function NativeTabLayout() {
   return (
     <NativeTabs>
       <NativeTabs.Trigger name="index">
-        <Icon sf={{ default: "checkmark.circle", selected: "checkmark.circle.fill" }} md="check-circle" />
+        <Icon sf={{ default: "checkmark.circle", selected: "checkmark.circle.fill" }} />
         <Label>Hoje</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="calendar">
-        <Icon sf={{ default: "calendar", selected: "calendar" }} md="calendar-today" />
+        <Icon sf={{ default: "calendar", selected: "calendar" }} />
         <Label>Calendario</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="stats">
-        <Icon sf={{ default: "chart.bar", selected: "chart.bar.fill" }} md="bar-chart" />
+        <Icon sf={{ default: "chart.bar", selected: "chart.bar.fill" }} />
         <Label>Progresso</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="settings">
-        <Icon sf={{ default: "gearshape", selected: "gearshape.fill" }} md="settings" />
+        <Icon sf={{ default: "gearshape", selected: "gearshape.fill" }} />
         <Label>Configurações</Label>
       </NativeTabs.Trigger>
     </NativeTabs>

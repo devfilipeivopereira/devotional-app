@@ -41,6 +41,7 @@ export default function ResetPasswordScreen() {
   const [codeLoading, setCodeLoading] = useState(false);
   const [codeError, setCodeError] = useState("");
   const [hasValidSession, setHasValidSession] = useState(false);
+  const [passwordResetSuccess, setPasswordResetSuccess] = useState(false);
   const [fontsLoaded] = useFonts({ Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold });
 
   useEffect(() => {
@@ -121,12 +122,14 @@ export default function ResetPasswordScreen() {
     }
     setLoading(true);
     const { error: err } = await supabase.auth.updateUser({ password: password.trim() });
-    setLoading(false);
     if (err) {
+      setLoading(false);
       setError(err.message);
-    } else {
-      router.replace("/(tabs)");
+      return;
     }
+    await supabase.auth.signOut();
+    setLoading(false);
+    setPasswordResetSuccess(true);
   };
 
   if (!fontsLoaded) return null;
@@ -144,7 +147,24 @@ export default function ResetPasswordScreen() {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {waitingHash ? (
+        {passwordResetSuccess ? (
+          <>
+            <Text style={[styles.title, { color: theme.text, fontFamily: "Nunito_700Bold" }]}>
+              Senha redefinida
+            </Text>
+            <Text style={[styles.subtitle, { color: theme.textSecondary, fontFamily: "Nunito_400Regular", marginBottom: 24 }]}>
+              Sua senha foi alterada com sucesso. Faça login com sua nova senha.
+            </Text>
+            <Pressable
+              onPress={() => router.replace("/(auth)")}
+              style={[styles.button, { backgroundColor: palette.teal }]}
+            >
+              <Text style={[styles.buttonText, { fontFamily: "Nunito_600SemiBold" }]}>
+                Voltar ao login
+              </Text>
+            </Pressable>
+          </>
+        ) : waitingHash ? (
           <Text style={[styles.subtitle, { color: theme.textSecondary, fontFamily: "Nunito_400Regular", textAlign: "center", marginTop: 24 }]}>
             A carregar…
           </Text>

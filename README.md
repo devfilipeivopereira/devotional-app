@@ -16,7 +16,7 @@ App de rastreamento de hábitos para iOS, Android e Web. Desenvolvido com **Expo
 - **Criar/editar hábitos** — Nome, cor, ícone, frequência (diário, dias úteis, fins de semana, personalizado)
 - **Detalhe do hábito** — Streak, taxas de conclusão (7/30/365 dias), histórico
 - **Tema** — Modo claro e escuro
-- **Recuperação de senha** — "Esqueci a senha" no login → e-mail com link → definir nova senha (app ou web)
+- **Recuperação de senha** — "Esqueci a senha" no login → e-mail com link ou código de 6 dígitos → definir nova senha → aviso de sucesso → voltar ao login e entrar com a nova senha
 - **Sync** — Supabase (opcional); sem config, usa apenas AsyncStorage local
 
 ---

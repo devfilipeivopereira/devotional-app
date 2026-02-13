@@ -59,8 +59,10 @@ services:
             - OPTIONS
           headers:
             - Accept
+            - Accept-Profile
             - Authorization
             - Content-Type
+            - Content-Profile
             - apikey
             - x-client-info
             - x-supabase-api-version
@@ -88,8 +90,10 @@ services:
             - OPTIONS
           headers:
             - Accept
+            - Accept-Profile
             - Authorization
             - Content-Type
+            - Content-Profile
             - apikey
             - x-client-info
             - x-supabase-api-version
@@ -117,8 +121,10 @@ services:
             - OPTIONS
           headers:
             - Accept
+            - Accept-Profile
             - Authorization
             - Content-Type
+            - Content-Profile
             - apikey
             - x-client-info
             - x-supabase-api-version
@@ -148,8 +154,10 @@ services:
             - OPTIONS
           headers:
             - Accept
+            - Accept-Profile
             - Authorization
             - Content-Type
+            - Content-Profile
             - apikey
             - x-client-info
             - x-supabase-api-version
@@ -180,8 +188,10 @@ services:
             - OPTIONS
           headers:
             - Accept
+            - Accept-Profile
             - Authorization
             - Content-Type
+            - Content-Profile
             - apikey
             - x-client-info
             - x-supabase-api-version
@@ -221,8 +231,10 @@ services:
             - OPTIONS
           headers:
             - Accept
+            - Accept-Profile
             - Authorization
             - Content-Type
+            - Content-Profile
             - apikey
             - x-client-info
             - x-supabase-api-version
@@ -262,8 +274,10 @@ services:
             - OPTIONS
           headers:
             - Accept
+            - Accept-Profile
             - Authorization
             - Content-Type
+            - Content-Profile
             - apikey
             - x-client-info
             - x-supabase-api-version
@@ -309,8 +323,10 @@ services:
             - OPTIONS
           headers:
             - Accept
+            - Accept-Profile
             - Authorization
             - Content-Type
+            - Content-Profile
             - apikey
             - x-client-info
             - x-supabase-api-version
@@ -349,8 +365,10 @@ services:
             - OPTIONS
           headers:
             - Accept
+            - Accept-Profile
             - Authorization
             - Content-Type
+            - Content-Profile
             - apikey
             - x-client-info
             - x-supabase-api-version
@@ -390,8 +408,10 @@ services:
             - OPTIONS
           headers:
             - Accept
+            - Accept-Profile
             - Authorization
             - Content-Type
+            - Content-Profile
             - apikey
             - x-client-info
             - x-supabase-api-version
@@ -422,8 +442,10 @@ services:
             - OPTIONS
           headers:
             - Accept
+            - Accept-Profile
             - Authorization
             - Content-Type
+            - Content-Profile
             - apikey
             - x-client-info
             - x-supabase-api-version
@@ -513,8 +535,10 @@ services:
             - OPTIONS
           headers:
             - Accept
+            - Accept-Profile
             - Authorization
             - Content-Type
+            - Content-Profile
             - apikey
             - x-client-info
             - x-supabase-api-version

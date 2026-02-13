@@ -68,9 +68,10 @@ Ela adiciona `user_id` em `habits`, remove as políticas “allow all” e cria 
 O fluxo "Esqueci a senha" usa o Supabase Auth:
 
 1. Na tela de login, o utilizador clica em **Esqueci a senha** e informa o e-mail.
-2. O Supabase envia um e-mail com um link (redirect para `myapp://reset-password` na app ou para o site na web).
-3. Ao abrir o link, a app define a sessão a partir dos tokens na URL e mostra a tela **Nova senha**.
-4. O utilizador define e confirma a nova senha; em seguida é redirecionado para a área logada.
+2. O Supabase envia um e-mail com um **link** (redirect para `myapp://reset-password` na app ou para o site na web) e, alternativamente, um **código de 6 dígitos**.
+3. O utilizador abre o link (a app define a sessão a partir dos tokens na URL) ou insere o e-mail e o código de 6 dígitos na tela **Código do e-mail** e clica em **Verificar código**.
+4. Na tela **Nova senha**, o utilizador define e confirma a nova senha e confirma.
+5. A app mostra **"Senha redefinida"** e **"Sua senha foi alterada com sucesso. Faça login com sua nova senha."**; o utilizador clica em **Voltar ao login** e faz login com a nova senha.
 
 **Supabase cloud:** em **Authentication → URL Configuration** adicione `myapp://reset-password` (e o domínio da web, se aplicável) em **Redirect URLs**.
 

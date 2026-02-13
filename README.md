@@ -135,6 +135,7 @@ habit-tracker/
 
 - [Supabase — configuração e migração](docs/SUPABASE.md)
 - [Supabase self-hosted — Auth e recuperação de senha](docs/supabase-selfhosted-auth-config.md)
+- [Supabase self-hosted — CORS no Kong (erro ao chamar API a partir da web)](docs/supabase-kong-cors.md)
 - [Guia de desenvolvimento](docs/DESENVOLVIMENTO.md)
 - [Gerar APK (Android)](docs/BUILD-APK.md)
 - [Deploy Web na Vercel](docs/DEPLOY-VERCEL.md)

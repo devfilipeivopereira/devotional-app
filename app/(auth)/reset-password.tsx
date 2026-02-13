@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -17,13 +17,42 @@ import { useFonts, Nunito_600SemiBold, Nunito_700Bold, Nunito_400Regular } from 
 
 const MIN_PASSWORD_LENGTH = 6;
 
+function parseHashParams(hash: string): Record<string, string> {
+  const params: Record<string, string> = {};
+  if (!hash || hash.charAt(0) === "#") hash = hash.slice(1);
+  hash.split("&").forEach((pair) => {
+    const [key, value] = pair.split("=");
+    if (key && value) params[decodeURIComponent(key)] = decodeURIComponent(value);
+  });
+  return params;
+}
+
 export default function ResetPasswordScreen() {
   const { theme, palette } = useTheme();
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [hashHandled, setHashHandled] = useState(Platform.OS !== "web");
   const [fontsLoaded] = useFonts({ Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold });
+
+  useEffect(() => {
+    if (Platform.OS !== "web" || !isSupabaseConfigured || hashHandled) return;
+    const hash = typeof window !== "undefined" ? window.location.hash : "";
+    const params = parseHashParams(hash);
+    const access_token = params.access_token;
+    const refresh_token = params.refresh_token;
+    if (access_token && refresh_token) {
+      supabase.auth.setSession({ access_token, refresh_token }).then(() => {
+        if (typeof window !== "undefined" && window.history.replaceState) {
+          window.history.replaceState(null, "", window.location.pathname);
+        }
+        setHashHandled(true);
+      });
+    } else {
+      setHashHandled(true);
+    }
+  }, [hashHandled]);
 
   const handleSubmit = async () => {
     setError("");

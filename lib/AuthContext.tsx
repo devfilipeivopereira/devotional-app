@@ -69,7 +69,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const resetPasswordForEmail = useCallback(async (email: string) => {
     if (!isSupabaseConfigured) return { error: "Supabase não configurado." };
     const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-      redirectTo: "myapp://reset-password",
+      redirectTo:
+        typeof window !== "undefined"
+          ? `${window.location.origin}/reset-password`
+          : "myapp://reset-password",
     });
     return { error: error?.message ?? null };
   }, []);

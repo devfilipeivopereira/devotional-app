@@ -13,6 +13,7 @@ import { useTheme } from "@/lib/useTheme";
 import { AuthProvider } from "@/lib/AuthContext";
 import { WEB_CONTENT_MAX_WIDTH } from "@/lib/useResponsiveWeb";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+import Colors from "@/constants/colors";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -74,6 +75,11 @@ function WebLayoutWrapper({ children }: { children: React.ReactNode }) {
   if (Platform.OS !== "web") return <>{children}</>;
   return (
     <View style={[styles.flex, styles.webFullBg, { backgroundColor: theme.background }]}>
+      <View style={[styles.webHeader, { backgroundColor: theme.background, borderBottomColor: theme.border }]}>
+        <View style={styles.webHeaderInner}>
+          <Text style={[styles.webLogo, { color: Colors.palette.teal }]}>HabitFlow</Text>
+        </View>
+      </View>
       <View style={[styles.flex, styles.webContentArea]}>{children}</View>
       <Pressable style={styles.webFooter} onPress={() => Linking.openURL(COPYRIGHT_URL)}>
         <Text style={[styles.webFooterText, { color: theme.textSecondary }]}>
@@ -153,6 +159,22 @@ const styles = StyleSheet.create({
   webFullBg: {
     width: "100%",
     minHeight: "100%",
+  },
+  webHeader: {
+    width: "100%",
+    borderBottomWidth: 1,
+    paddingVertical: 14,
+  },
+  webHeaderInner: {
+    maxWidth: WEB_CONTENT_MAX_WIDTH,
+    width: "100%",
+    alignSelf: "center",
+    paddingHorizontal: 24,
+  },
+  webLogo: {
+    fontSize: 22,
+    fontWeight: "700",
+    letterSpacing: 0.5,
   },
   webContentArea: {
     maxWidth: WEB_CONTENT_MAX_WIDTH,

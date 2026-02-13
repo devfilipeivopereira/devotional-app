@@ -10,6 +10,7 @@ import Animated, { FadeInDown, FadeInRight, useAnimatedStyle, useSharedValue, wi
 import { useTheme } from '@/lib/useTheme';
 import { useAuth } from '@/lib/AuthContext';
 import { useHabits } from '@/lib/habits-context';
+import { useResponsiveWeb } from '@/lib/useResponsiveWeb';
 import { useFonts, Nunito_600SemiBold, Nunito_700Bold, Nunito_800ExtraBold, Nunito_400Regular } from '@expo-google-fonts/nunito';
 
 function formatDate(date: Date): string {
@@ -104,6 +105,7 @@ function getFirstName(user: { user_metadata?: { full_name?: string } } | null): 
 export default function TodayScreen() {
   const { theme, isDark, palette } = useTheme();
   const { user } = useAuth();
+  const { isDesktopWeb } = useResponsiveWeb();
   const {
     habits, getHabitsForDate, isCompleted, toggleCompletion, getStreak,
     getCompletedCount, deleteHabit, error, refetch,
@@ -215,7 +217,7 @@ export default function TodayScreen() {
             </Animated.View>
           )}
 
-          <View style={styles.habitsList}>
+          <View style={[styles.habitsList, isDesktopWeb && styles.habitsListWeb]}>
             {todayHabits.length === 0 ? (
               <Animated.View
                 entering={Platform.OS !== 'web' ? FadeInDown.delay(200).duration(400) : undefined}
@@ -231,15 +233,16 @@ export default function TodayScreen() {
               </Animated.View>
             ) : (
               todayHabits.map((habit, i) => (
-                <HabitCard
-                  key={habit.id}
-                  habit={habit}
-                  done={isCompleted(habit.id, today)}
-                  streak={getStreak(habit.id)}
-                  onToggle={() => handleToggle(habit.id)}
-                  onLongPress={() => handleLongPress(habit)}
-                  index={i}
-                />
+                <View key={habit.id} style={isDesktopWeb ? styles.habitCardWrapWeb : undefined}>
+                  <HabitCard
+                    habit={habit}
+                    done={isCompleted(habit.id, today)}
+                    streak={getStreak(habit.id)}
+                    onToggle={() => handleToggle(habit.id)}
+                    onLongPress={() => handleLongPress(habit)}
+                    index={i}
+                  />
+                </View>
               ))
             )}
           </View>
@@ -297,6 +300,16 @@ const styles = StyleSheet.create({
   },
   progressPercent: { fontSize: 14, fontWeight: '700' as const },
   habitsList: { paddingHorizontal: 16 },
+  habitsListWeb: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+    justifyContent: 'space-between',
+  },
+  habitCardWrapWeb: {
+    width: '48%',
+    minWidth: 280,
+  },
   habitCard: {
     flexDirection: 'row',
     alignItems: 'center',

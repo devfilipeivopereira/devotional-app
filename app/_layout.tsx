@@ -9,6 +9,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { queryClient } from "@/lib/query-client";
 import { HabitsProvider } from "@/lib/habits-context";
 import { ThemeProvider } from "@/lib/ThemeContext";
+import { useTheme } from "@/lib/useTheme";
 import { AuthProvider } from "@/lib/AuthContext";
 import { WEB_CONTENT_MAX_WIDTH } from "@/lib/useResponsiveWeb";
 
@@ -23,6 +24,16 @@ function LoadingSplash() {
         <Text style={styles.splashTitle}>HabitFlow</Text>
       </View>
       <Text style={styles.splashFooter}>By "@filipeivopereira"</Text>
+    </View>
+  );
+}
+
+function WebLayoutWrapper({ children }: { children: React.ReactNode }) {
+  const { theme } = useTheme();
+  if (Platform.OS !== "web") return <>{children}</>;
+  return (
+    <View style={[styles.flex, styles.webFullBg, { backgroundColor: theme.background }]}>
+      <View style={[styles.flex, styles.webContentArea]}>{children}</View>
     </View>
   );
 }
@@ -68,15 +79,17 @@ export default function RootLayout() {
           <AuthProvider>
             <GestureHandlerRootView style={styles.flex}>
               <KeyboardProvider>
-                <View style={[styles.flex, Platform.OS === "web" && styles.webContainer]}>
-                  {!isReady ? (
+                {!isReady ? (
+                  <View style={styles.flex}>
                     <LoadingSplash />
-                  ) : (
+                  </View>
+                ) : (
+                  <WebLayoutWrapper>
                     <HabitsProvider>
                       <RootLayoutNav />
                     </HabitsProvider>
-                  )}
-                </View>
+                  </WebLayoutWrapper>
+                )}
               </KeyboardProvider>
             </GestureHandlerRootView>
           </AuthProvider>
@@ -88,11 +101,15 @@ export default function RootLayout() {
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
-  webContainer: {
+  webFullBg: {
+    width: "100%",
+    minHeight: "100%",
+  },
+  webContentArea: {
     maxWidth: WEB_CONTENT_MAX_WIDTH,
     width: "100%",
     alignSelf: "center",
-    paddingHorizontal: 20,
+    paddingHorizontal: 24,
   },
   splash: {
     backgroundColor: SPLASH_BG,

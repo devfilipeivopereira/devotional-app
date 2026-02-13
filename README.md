@@ -87,6 +87,8 @@ npm run supabase:migrate
 | `npm run test-supabase` | Testa conexão e CRUD no Supabase |
 | `npm run lint` | Executa o ESLint |
 | `npm run lint:fix` | Corrige automaticamente o que for possível |
+| `npm run build:web` | Exporta a app para web (pasta `dist/`) — para deploy na Vercel |
+| `npm run build:apk` | Gera APK Android via EAS Build |
 
 ---
 
@@ -132,6 +134,7 @@ habit-tracker/
 - [Supabase — configuração e migração](docs/SUPABASE.md)
 - [Guia de desenvolvimento](docs/DESENVOLVIMENTO.md)
 - [Gerar APK (Android)](docs/BUILD-APK.md)
+- [Deploy Web na Vercel](docs/DEPLOY-VERCEL.md)
 
 ---
 

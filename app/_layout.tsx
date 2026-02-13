@@ -2,7 +2,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
@@ -10,6 +10,7 @@ import { queryClient } from "@/lib/query-client";
 import { HabitsProvider } from "@/lib/habits-context";
 import { ThemeProvider } from "@/lib/ThemeContext";
 import { AuthProvider } from "@/lib/AuthContext";
+import { WEB_CONTENT_MAX_WIDTH } from "@/lib/useResponsiveWeb";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -67,13 +68,15 @@ export default function RootLayout() {
           <AuthProvider>
             <GestureHandlerRootView style={styles.flex}>
               <KeyboardProvider>
-                {!isReady ? (
-                  <LoadingSplash />
-                ) : (
-                  <HabitsProvider>
-                    <RootLayoutNav />
-                  </HabitsProvider>
-                )}
+                <View style={[styles.flex, Platform.OS === "web" && styles.webContainer]}>
+                  {!isReady ? (
+                    <LoadingSplash />
+                  ) : (
+                    <HabitsProvider>
+                      <RootLayoutNav />
+                    </HabitsProvider>
+                  )}
+                </View>
               </KeyboardProvider>
             </GestureHandlerRootView>
           </AuthProvider>
@@ -85,6 +88,12 @@ export default function RootLayout() {
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
+  webContainer: {
+    maxWidth: WEB_CONTENT_MAX_WIDTH,
+    width: "100%",
+    alignSelf: "center",
+    paddingHorizontal: 20,
+  },
   splash: {
     backgroundColor: SPLASH_BG,
     justifyContent: "space-between",

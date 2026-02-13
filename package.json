@@ -15,7 +15,8 @@
     "start": "npx expo start",
     "lint": "npx expo lint",
     "lint:fix": "npx expo lint --fix",
-    "build:apk": "eas build --platform android --profile preview"
+    "build:apk": "eas build --platform android --profile preview",
+    "build:web": "npx expo export -p web"
   },
   "dependencies": {
     "@expo-google-fonts/nunito": "^0.4.2",

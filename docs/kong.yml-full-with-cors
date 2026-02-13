@@ -63,6 +63,7 @@ services:
             - Authorization
             - Content-Type
             - Content-Profile
+            - Prefer
             - apikey
             - x-client-info
             - x-supabase-api-version
@@ -94,6 +95,7 @@ services:
             - Authorization
             - Content-Type
             - Content-Profile
+            - Prefer
             - apikey
             - x-client-info
             - x-supabase-api-version
@@ -125,6 +127,7 @@ services:
             - Authorization
             - Content-Type
             - Content-Profile
+            - Prefer
             - apikey
             - x-client-info
             - x-supabase-api-version
@@ -158,6 +161,7 @@ services:
             - Authorization
             - Content-Type
             - Content-Profile
+            - Prefer
             - apikey
             - x-client-info
             - x-supabase-api-version
@@ -192,6 +196,7 @@ services:
             - Authorization
             - Content-Type
             - Content-Profile
+            - Prefer
             - apikey
             - x-client-info
             - x-supabase-api-version
@@ -235,6 +240,7 @@ services:
             - Authorization
             - Content-Type
             - Content-Profile
+            - Prefer
             - apikey
             - x-client-info
             - x-supabase-api-version
@@ -278,6 +284,7 @@ services:
             - Authorization
             - Content-Type
             - Content-Profile
+            - Prefer
             - apikey
             - x-client-info
             - x-supabase-api-version
@@ -327,6 +334,7 @@ services:
             - Authorization
             - Content-Type
             - Content-Profile
+            - Prefer
             - apikey
             - x-client-info
             - x-supabase-api-version
@@ -369,6 +377,7 @@ services:
             - Authorization
             - Content-Type
             - Content-Profile
+            - Prefer
             - apikey
             - x-client-info
             - x-supabase-api-version
@@ -412,6 +421,7 @@ services:
             - Authorization
             - Content-Type
             - Content-Profile
+            - Prefer
             - apikey
             - x-client-info
             - x-supabase-api-version
@@ -446,6 +456,7 @@ services:
             - Authorization
             - Content-Type
             - Content-Profile
+            - Prefer
             - apikey
             - x-client-info
             - x-supabase-api-version
@@ -539,6 +550,7 @@ services:
             - Authorization
             - Content-Type
             - Content-Profile
+            - Prefer
             - apikey
             - x-client-info
             - x-supabase-api-version

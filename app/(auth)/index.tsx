@@ -9,6 +9,7 @@ import {
   Platform,
   ScrollView,
   ActivityIndicator,
+  Linking,
 } from "react-native";
 import { router } from "expo-router";
 import { useTheme } from "@/lib/useTheme";
@@ -16,6 +17,7 @@ import { useAuth } from "@/lib/AuthContext";
 import { useFonts, Nunito_600SemiBold, Nunito_700Bold, Nunito_400Regular } from "@expo-google-fonts/nunito";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const COPYRIGHT_URL = "https://www.filipeivopereira.com";
 
 export default function LoginScreen() {
   const { theme, palette } = useTheme();
@@ -139,6 +141,17 @@ export default function LoginScreen() {
             </Text>
           </Text>
         </Pressable>
+
+        {Platform.OS !== "web" && (
+          <Pressable
+            style={styles.footer}
+            onPress={() => Linking.openURL(COPYRIGHT_URL)}
+          >
+            <Text style={[styles.footerText, { color: theme.textSecondary }]}>
+              © Filipe Ivo Pereira
+            </Text>
+          </Pressable>
+        )}
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -174,4 +187,13 @@ const styles = StyleSheet.create({
   linkWrap: { marginTop: 24, alignItems: "center" },
   link: { fontSize: 14 },
   linkBold: { fontSize: 14 },
+  footer: {
+    paddingVertical: 24,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  footerText: {
+    fontSize: 12,
+    textDecorationLine: "underline",
+  },
 });

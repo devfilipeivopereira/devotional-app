@@ -8,6 +8,7 @@ import {
   Platform,
   ScrollView,
   ActivityIndicator,
+  Linking,
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useTheme } from "@/lib/useTheme";
@@ -16,6 +17,7 @@ import { useFonts, Nunito_600SemiBold, Nunito_700Bold, Nunito_400Regular } from 
 
 const MIN_PASSWORD_LENGTH = 6;
 const OTP_LENGTH = 6;
+const COPYRIGHT_URL = "https://www.filipeivopereira.com";
 
 function parseHashParams(hash: string): Record<string, string> {
   const params: Record<string, string> = {};
@@ -295,6 +297,17 @@ export default function ResetPasswordScreen() {
             </Pressable>
           </>
         )}
+
+        {Platform.OS !== "web" && (
+          <Pressable
+            style={styles.footer}
+            onPress={() => Linking.openURL(COPYRIGHT_URL)}
+          >
+            <Text style={[styles.footerText, { color: theme.textSecondary }]}>
+              © Filipe Ivo Pereira
+            </Text>
+          </Pressable>
+        )}
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -326,4 +339,13 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   buttonText: { color: "#fff", fontSize: 16 },
+  footer: {
+    paddingVertical: 24,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  footerText: {
+    fontSize: 12,
+    textDecorationLine: "underline",
+  },
 });

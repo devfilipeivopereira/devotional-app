@@ -13,10 +13,12 @@ type AuthContextValue = {
   session: Session | null;
   user: User | null;
   isLoading: boolean;
+  pendingPasswordReset: boolean;
   signUp: (name: string, email: string, password: string) => Promise<{ error: string | null }>;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   resetPasswordForEmail: (email: string) => Promise<{ error: string | null }>;
+  clearPendingPasswordReset: () => void;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -24,6 +26,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(isSupabaseConfigured);
+  const [pendingPasswordReset, setPendingPasswordReset] = useState(false);
 
   useEffect(() => {
     if (!isSupabaseConfigured) {
@@ -38,11 +41,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, s) => {
+    } = supabase.auth.onAuthStateChange((event, s) => {
       setSession(s);
+      if (event === "PASSWORD_RECOVERY") {
+        setPendingPasswordReset(true);
+      }
     });
 
     return () => subscription.unsubscribe();
+  }, []);
+
+  const clearPendingPasswordReset = useCallback(() => {
+    setPendingPasswordReset(false);
   }, []);
 
   const signUp = useCallback(
@@ -82,10 +92,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     session,
     user: session?.user ?? null,
     isLoading,
+    pendingPasswordReset,
     signUp,
     signIn,
     signOut,
     resetPasswordForEmail,
+    clearPendingPasswordReset,
   };
 
   return (

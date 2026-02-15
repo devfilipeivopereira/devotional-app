@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useTheme } from "@/lib/useTheme";
+import { useAuth } from "@/lib/AuthContext";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { useFonts, Nunito_600SemiBold, Nunito_700Bold, Nunito_400Regular } from "@expo-google-fonts/nunito";
 
@@ -31,6 +32,7 @@ function parseHashParams(hash: string): Record<string, string> {
 
 export default function ResetPasswordScreen() {
   const { theme, palette } = useTheme();
+  const { clearPendingPasswordReset } = useAuth();
   const params = useLocalSearchParams<{ email?: string }>();
   const initialEmail = typeof params.email === "string" ? params.email : Array.isArray(params.email) ? (params.email[0] ?? "") : "";
   const [password, setPassword] = useState("");
@@ -45,6 +47,10 @@ export default function ResetPasswordScreen() {
   const [hasValidSession, setHasValidSession] = useState(false);
   const [passwordResetSuccess, setPasswordResetSuccess] = useState(false);
   const [fontsLoaded] = useFonts({ Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold });
+
+  useEffect(() => {
+    clearPendingPasswordReset();
+  }, [clearPendingPasswordReset]);
 
   useEffect(() => {
     if (!isSupabaseConfigured) return;

@@ -116,6 +116,7 @@ habit-tracker/
 │   └── habit-detail.tsx  # Detalhe e estatísticas
 ├── lib/
 │   ├── habits-context.tsx  # Estado e lógica (Supabase ou AsyncStorage)
+│   ├── AuthContext.tsx      # Autenticação e flag de recuperação de senha
 │   ├── supabase.ts         # Cliente Supabase
 │   └── useTheme.ts
 ├── components/

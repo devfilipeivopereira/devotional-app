@@ -7,7 +7,7 @@ import { isSupabaseConfigured } from "@/lib/supabase";
 const SPLASH_BG = "#120b2d";
 
 export default function IndexScreen() {
-  const { session, isLoading } = useAuth();
+  const { session, isLoading, pendingPasswordReset } = useAuth();
 
   useEffect(() => {
     if (!isSupabaseConfigured) {
@@ -15,12 +15,16 @@ export default function IndexScreen() {
       return;
     }
     if (isLoading) return;
+    if (pendingPasswordReset) {
+      router.replace("/(auth)/reset-password");
+      return;
+    }
     if (session) {
       router.replace("/(tabs)");
     } else {
       router.replace("/(auth)");
     }
-  }, [isSupabaseConfigured, session, isLoading]);
+  }, [isSupabaseConfigured, session, isLoading, pendingPasswordReset]);
 
   return (
     <View style={[StyleSheet.absoluteFill, styles.splash]}>

@@ -81,16 +81,8 @@ function DeepLinkHandler() {
       handleResetPasswordUrl(url);
     });
 
-    // Escutar evento PASSWORD_RECOVERY do Supabase para redirecionar automaticamente
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'PASSWORD_RECOVERY') {
-        router.replace("/(auth)/reset-password" as import("expo-router").Href);
-      }
-    });
-
     return () => {
       sub.remove();
-      subscription.unsubscribe();
     };
   }, []);
   return null;

@@ -80,7 +80,18 @@ function DeepLinkHandler() {
     const sub = Linking.addEventListener("url", ({ url }) => {
       handleResetPasswordUrl(url);
     });
-    return () => sub.remove();
+
+    // Escutar evento PASSWORD_RECOVERY do Supabase para redirecionar automaticamente
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        router.replace("/(auth)/reset-password" as import("expo-router").Href);
+      }
+    });
+
+    return () => {
+      sub.remove();
+      subscription.unsubscribe();
+    };
   }, []);
   return null;
 }

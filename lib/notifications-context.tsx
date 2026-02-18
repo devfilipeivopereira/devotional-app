@@ -150,7 +150,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const toggleEnabled = useCallback(async () => {
-    if (!settings.enabled) {
+    if (!settings.enabled && Platform.OS !== "web") {
       const granted = await requestPermissions();
       if (!granted) {
         Alert.alert(

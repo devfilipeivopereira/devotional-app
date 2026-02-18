@@ -8,6 +8,7 @@ import { KeyboardProvider } from "react-native-keyboard-controller";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { queryClient } from "@/lib/query-client";
 import { HabitsProvider } from "@/lib/habits-context";
+import { NotificationsProvider } from "@/lib/notifications-context";
 import { ThemeProvider } from "@/lib/ThemeContext";
 import { useTheme } from "@/lib/useTheme";
 import { AuthProvider } from "@/lib/AuthContext";
@@ -173,7 +174,9 @@ export default function RootLayout() {
                     <DeepLinkHandler />
                     <WebLayoutWrapper>
                       <HabitsProvider>
-                        <RootLayoutNav />
+                        <NotificationsProvider>
+                          <RootLayoutNav />
+                        </NotificationsProvider>
                       </HabitsProvider>
                     </WebLayoutWrapper>
                   </>

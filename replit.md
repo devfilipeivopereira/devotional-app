@@ -17,7 +17,8 @@ Preferred communication style: Simple, everyday language.
 - **Framework**: React Native with Expo SDK 54, using the new architecture (`newArchEnabled: true`)
 - **Routing**: Expo Router with file-based routing (typed routes enabled via `experiments.typedRoutes`)
 - **State Management**: React Context (`HabitsProvider` in `lib/habits-context.tsx`) for habit data, with TanStack React Query available for server state
-- **Local Storage**: `@react-native-async-storage/async-storage` for persisting habits and completions on-device
+- **Local Storage**: `@react-native-async-storage/async-storage` for persisting habits, completions, and notification settings on-device
+- **Notifications**: `expo-notifications` for local push notification reminders with configurable schedules (`lib/notifications-context.tsx`)
 - **Animations**: `react-native-reanimated` for smooth UI animations and transitions
 - **UI Components**: Custom components with Ionicons, Nunito font family, and a custom theming system supporting light/dark modes
 - **Keyboard Handling**: `react-native-keyboard-controller` with a compatibility wrapper for web

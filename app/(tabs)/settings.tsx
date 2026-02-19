@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import {
   View,
   Text,
@@ -261,6 +261,7 @@ export default function SettingsScreen() {
 
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [editingReminder, setEditingReminder] = useState<ReminderTime | null>(null);
+  const isConfirmingRef = useRef(false);
 
   const handleAddReminder = useCallback(() => {
     if (Platform.OS !== "web")
@@ -276,13 +277,20 @@ export default function SettingsScreen() {
 
   const handleTimeConfirm = useCallback(
     async (hour: number, minute: number) => {
-      if (editingReminder) {
-        await updateReminder(editingReminder.id, hour, minute);
-      } else {
-        await addReminder(hour, minute);
-      }
+      if (isConfirmingRef.current) return;
+      isConfirmingRef.current = true;
+      const reminderToEdit = editingReminder;
       setShowTimePicker(false);
       setEditingReminder(null);
+      try {
+        if (reminderToEdit) {
+          await updateReminder(reminderToEdit.id, hour, minute);
+        } else {
+          await addReminder(hour, minute);
+        }
+      } finally {
+        isConfirmingRef.current = false;
+      }
     },
     [editingReminder, updateReminder, addReminder]
   );

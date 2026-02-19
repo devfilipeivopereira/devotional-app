@@ -62,14 +62,23 @@ export function DevotionalProvider({ children }: { children: ReactNode }) {
         if (!isSupabaseConfigured) return;
         setIsLoadingSeries(true);
         try {
-            const { data, error } = await supabase
+            const [{ data: seriesData, error: seriesErr }, { data: daysData, error: daysErr }] = await Promise.all([
+                supabase
                 .from("devotional_series")
                 .select("*")
                 .eq("is_published", true)
-                .order("created_at", { ascending: false });
+                .order("created_at", { ascending: false }),
+                supabase
+                    .from("devotional_days")
+                    .select("series_id")
+                    .eq("is_published", true),
+            ]);
 
-            if (error) throw error;
-            setTodaySeries(data ?? []);
+            if (seriesErr) throw seriesErr;
+            if (daysErr) throw daysErr;
+
+            const publishedSeriesIds = new Set((daysData ?? []).map((d: any) => d.series_id));
+            setTodaySeries((seriesData ?? []).filter((s: any) => publishedSeriesIds.has(s.id)));
         } catch (err: any) {
             console.error("Error loading series:", err.message);
         } finally {

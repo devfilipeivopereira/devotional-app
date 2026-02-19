@@ -9,11 +9,14 @@ import {
   ActivityIndicator,
   TextInput,
   FlatList,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "@/lib/useTheme";
 import Colors from "@/constants/colors";
 import { Typography } from "@/constants/design";
+import { useAuth } from "@/lib/AuthContext";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import {
   getChapter,
   getRandomVerse,
@@ -29,6 +32,7 @@ type ViewMode = "books" | "chapters" | "reading";
 
 export default function BibleScreen() {
   const { theme } = useTheme();
+  const { user } = useAuth();
   const [viewMode, setViewMode] = useState<ViewMode>("books");
   const [testament, setTestament] = useState<"VT" | "NT">("VT");
   const [search, setSearch] = useState("");
@@ -50,6 +54,7 @@ export default function BibleScreen() {
 
   const [verseInput, setVerseInput] = useState("");
   const [highlightVerse, setHighlightVerse] = useState<number | null>(null);
+  const [savedHighlights, setSavedHighlights] = useState<Set<number>>(new Set());
   const verseListRef = useRef<FlatList<BibleVerse> | null>(null);
 
   const loadBooks = useCallback(async () => {
@@ -139,6 +144,10 @@ export default function BibleScreen() {
 
   const goToChapters = () => {
     if (!selectedBook) return;
+    const chapterCount = Number(selectedBook.chapters);
+    if (!Number.isFinite(chapterCount) || chapterCount < 1) {
+      return;
+    }
     setViewMode("chapters");
     setHighlightVerse(null);
   };
@@ -157,6 +166,71 @@ export default function BibleScreen() {
     const matchesSearch = !search || book.name.toLowerCase().includes(search.toLowerCase());
     return matchesTestament && matchesSearch;
   });
+
+  const loadChapterHighlights = useCallback(async () => {
+    if (!isSupabaseConfigured || !user || !selectedBook || viewMode !== "reading") {
+      setSavedHighlights(new Set());
+      return;
+    }
+    const { data, error } = await supabase
+      .from("bible_highlights")
+      .select("verse_number")
+      .eq("user_id", user.id)
+      .eq("book_abbrev", selectedBook.abbrev.pt)
+      .eq("chapter", selectedChapter);
+
+    if (error) {
+      console.error("Error loading highlights:", error.message);
+      return;
+    }
+    setSavedHighlights(new Set((data ?? []).map((row: any) => Number(row.verse_number))));
+  }, [selectedBook, selectedChapter, user, viewMode]);
+
+  useEffect(() => {
+    loadChapterHighlights();
+  }, [loadChapterHighlights, verses.length]);
+
+  const toggleVerseHighlight = async (verse: BibleVerse) => {
+    if (!isSupabaseConfigured || !user || !selectedBook) {
+      Alert.alert("Acesso", "Faça login para salvar destaques.");
+      return;
+    }
+
+    const isHighlighted = savedHighlights.has(verse.number);
+    if (isHighlighted) {
+      const { error } = await supabase
+        .from("bible_highlights")
+        .delete()
+        .eq("user_id", user.id)
+        .eq("book_abbrev", selectedBook.abbrev.pt)
+        .eq("chapter", selectedChapter)
+        .eq("verse_number", verse.number);
+      if (error) {
+        Alert.alert("Erro", error.message);
+        return;
+      }
+      setSavedHighlights((prev) => {
+        const next = new Set(prev);
+        next.delete(verse.number);
+        return next;
+      });
+      return;
+    }
+
+    const { error } = await supabase.from("bible_highlights").insert({
+      user_id: user.id,
+      book_abbrev: selectedBook.abbrev.pt,
+      book_name: selectedBook.name,
+      chapter: selectedChapter,
+      verse_number: verse.number,
+      verse_text: verse.text,
+    });
+    if (error) {
+      Alert.alert("Erro", error.message);
+      return;
+    }
+    setSavedHighlights((prev) => new Set([...prev, verse.number]));
+  };
 
   if (viewMode === "reading" && selectedBook) {
     return (
@@ -233,9 +307,17 @@ export default function BibleScreen() {
               ) : null
             }
             renderItem={({ item: verse }) => (
-              <View
+              <Pressable
+                onPress={() => toggleVerseHighlight(verse)}
+                hitSlop={6}
                 style={[
                   styles.verseRow,
+                  savedHighlights.has(verse.number)
+                    ? {
+                        borderColor: "#E7B93B99",
+                        backgroundColor: "#F9E27A66",
+                      }
+                    : null,
                   highlightVerse === verse.number
                     ? {
                         borderColor: Colors.palette.coral + "66",
@@ -244,13 +326,39 @@ export default function BibleScreen() {
                     : null,
                 ]}
               >
-                <Text style={[styles.verseText, { color: theme.text }]}>
-                  <Text style={[styles.verseNumber, { color: Colors.palette.coral }]}>
-                    {verse.number}{" "}
-                  </Text>
-                  {verse.text}
-                </Text>
-              </View>
+                {savedHighlights.has(verse.number) ? (
+                  <View style={styles.highlightMarker} />
+                ) : null}
+                <View style={styles.verseTopRow}>
+                  <Pressable onPress={() => toggleVerseHighlight(verse)} hitSlop={8}>
+                    <Text
+                      style={[
+                        styles.verseNumber,
+                        { color: savedHighlights.has(verse.number) ? "#9A6B00" : Colors.palette.coral },
+                      ]}
+                    >
+                      {verse.number}{" "}
+                    </Text>
+                  </Pressable>
+                  <Pressable onPress={() => toggleVerseHighlight(verse)} style={{ flex: 1 }} hitSlop={6}>
+                    <Text
+                      style={[
+                        styles.verseText,
+                        { color: theme.text, flex: 1 },
+                        savedHighlights.has(verse.number) ? styles.verseTextHighlighted : null,
+                      ]}
+                    >
+                      {verse.text}
+                    </Text>
+                  </Pressable>
+                  <Ionicons
+                    name={savedHighlights.has(verse.number) ? "bookmark" : "bookmark-outline"}
+                    size={16}
+                    color={savedHighlights.has(verse.number) ? "#C89D1D" : theme.textSecondary}
+                    style={{ marginLeft: 8, marginTop: 4 }}
+                  />
+                </View>
+              </Pressable>
             )}
             ListFooterComponent={
               <View style={styles.chapterNav}>
@@ -285,7 +393,12 @@ export default function BibleScreen() {
   }
 
   if (viewMode === "chapters" && selectedBook) {
-    const chapters = Array.from({ length: selectedBook.chapters }, (_, index) => index + 1);
+    const parsedChapterCount = Number(selectedBook.chapters);
+    const chapterCount =
+      Number.isFinite(parsedChapterCount) && parsedChapterCount > 0
+        ? Math.min(200, Math.floor(parsedChapterCount))
+        : 1;
+    const chapters = Array.from({ length: chapterCount }, (_, index) => index + 1);
 
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
@@ -671,12 +784,32 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "transparent",
-    paddingHorizontal: 8,
+    paddingHorizontal: 10,
     paddingVertical: 6,
     marginBottom: 10,
+    position: "relative",
+  },
+  highlightMarker: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: 5,
+    borderTopLeftRadius: 8,
+    borderBottomLeftRadius: 8,
+    backgroundColor: "#E1A100",
+  },
+  verseTopRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
   },
   verseText: {
     ...Typography.contentSmall,
+  },
+  verseTextHighlighted: {
+    backgroundColor: "#F9E27A55",
+    borderRadius: 4,
+    paddingHorizontal: 2,
   },
   verseNumber: {
     ...Typography.caption,

@@ -93,6 +93,7 @@ export default function TodayScreen() {
             .from("devotional_days")
             .select("id")
             .eq("is_published", true)
+            .order("day_number", { ascending: true })
             .order("created_at", { ascending: true })
             .limit(1);
 
@@ -109,7 +110,12 @@ export default function TodayScreen() {
 
         const dayId = data?.[0]?.id;
         if (!dayId) {
-            Alert.alert("Sem conteúdo", "Nenhum dia publicado foi encontrado.");
+            Alert.alert(
+                "Sem conteúdo",
+                seriesId
+                    ? "Essa série ainda não possui dias publicados."
+                    : "Nenhum dia publicado foi encontrado."
+            );
             return;
         }
 

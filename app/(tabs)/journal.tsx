@@ -7,55 +7,60 @@ import {
   SafeAreaView,
   Pressable,
   TextInput,
-  ActivityIndicator,
   Modal,
+  ActivityIndicator,
   Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "@/lib/useTheme";
 import Colors from "@/constants/colors";
-import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { useAuth } from "@/lib/AuthContext";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 
-type FilterTab = "all" | "highlights" | "notes";
+type TabKey = "highlights" | "notes";
 
-type DayOption = {
+type BibleHighlight = {
   id: string;
-  day_number: number;
-  title: string;
-  devotional_series?: { title: string } | null;
+  book_name: string;
+  book_abbrev: string;
+  chapter: number;
+  verse_number: number;
+  verse_text: string;
+  created_at: string;
 };
 
-type JournalEntry = {
+type UserNote = {
   id: string;
-  day_id: string;
-  block_id: string | null;
-  content: string;
+  title: string;
+  description: string;
+  note_date: string;
   created_at: string;
   updated_at: string;
-  devotional_days?: DayOption | null;
 };
+
+function todayAsIsoDate() {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, "0");
+  const d = String(now.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
 
 export default function JournalScreen() {
   const { theme } = useTheme();
   const { user } = useAuth();
 
-  const [activeTab, setActiveTab] = React.useState<FilterTab>("all");
-  const [entries, setEntries] = React.useState<JournalEntry[]>([]);
-  const [days, setDays] = React.useState<DayOption[]>([]);
+  const [activeTab, setActiveTab] = React.useState<TabKey>("highlights");
   const [loading, setLoading] = React.useState(true);
+  const [highlights, setHighlights] = React.useState<BibleHighlight[]>([]);
+  const [notes, setNotes] = React.useState<UserNote[]>([]);
 
   const [modalOpen, setModalOpen] = React.useState(false);
   const [saving, setSaving] = React.useState(false);
   const [editingId, setEditingId] = React.useState<string | null>(null);
-  const [selectedDayId, setSelectedDayId] = React.useState<string>("");
-  const [content, setContent] = React.useState("");
-
-  const tabs = [
-    { key: "all" as const, label: "Tudo" },
-    { key: "highlights" as const, label: "Destaques" },
-    { key: "notes" as const, label: "Anotacoes" },
-  ];
+  const [title, setTitle] = React.useState("");
+  const [description, setDescription] = React.useState("");
+  const [noteDate, setNoteDate] = React.useState(todayAsIsoDate());
 
   const loadData = React.useCallback(async () => {
     if (!isSupabaseConfigured || !user) {
@@ -64,104 +69,67 @@ export default function JournalScreen() {
     }
     setLoading(true);
     try {
-      const [daysRes, entriesRes] = await Promise.all([
+      const [hRes, nRes] = await Promise.all([
         supabase
-          .from("devotional_days")
-          .select("id, day_number, title, devotional_series(title)")
-          .eq("is_published", true)
-          .order("created_at", { ascending: false })
-          .limit(50),
-        supabase
-          .from("devotional_journal")
-          .select(
-            "id, day_id, block_id, content, created_at, updated_at, devotional_days(id, day_number, title, devotional_series(title))"
-          )
+          .from("bible_highlights")
+          .select("*")
           .eq("user_id", user.id)
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("user_notes")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("note_date", { ascending: false })
           .order("updated_at", { ascending: false }),
       ]);
 
-      if (daysRes.error) throw daysRes.error;
-      if (entriesRes.error) throw entriesRes.error;
+      if (hRes.error) throw hRes.error;
+      if (nRes.error) throw nRes.error;
 
-      const fetchedDays: DayOption[] = (daysRes.data ?? []).map((row: any) => ({
-        id: row.id,
-        day_number: row.day_number,
-        title: row.title,
-        devotional_series: Array.isArray(row.devotional_series)
-          ? row.devotional_series[0] ?? null
-          : row.devotional_series ?? null,
-      }));
-      setDays(fetchedDays);
-      if (!selectedDayId && fetchedDays[0]?.id) {
-        setSelectedDayId(fetchedDays[0].id);
-      }
-
-      const fetchedEntries: JournalEntry[] = (entriesRes.data ?? []).map((row: any) => ({
-        id: row.id,
-        day_id: row.day_id,
-        block_id: row.block_id,
-        content: row.content,
-        created_at: row.created_at,
-        updated_at: row.updated_at,
-        devotional_days: Array.isArray(row.devotional_days)
-          ? (row.devotional_days[0]
-              ? {
-                  id: row.devotional_days[0].id,
-                  day_number: row.devotional_days[0].day_number,
-                  title: row.devotional_days[0].title,
-                  devotional_series: Array.isArray(row.devotional_days[0].devotional_series)
-                    ? row.devotional_days[0].devotional_series[0] ?? null
-                    : row.devotional_days[0].devotional_series ?? null,
-                }
-              : null)
-          : row.devotional_days ?? null,
-      }));
-      setEntries(fetchedEntries);
+      setHighlights((hRes.data ?? []) as BibleHighlight[]);
+      setNotes((nRes.data ?? []) as UserNote[]);
     } catch (err: any) {
-      Alert.alert("Erro", err.message ?? "Falha ao carregar diario.");
+      Alert.alert("Erro", err.message ?? "Falha ao carregar dados.");
     } finally {
       setLoading(false);
     }
-  }, [selectedDayId, user]);
+  }, [user]);
 
   React.useEffect(() => {
     loadData();
   }, [loadData]);
 
-  const filteredEntries = entries.filter((entry) => {
-    if (activeTab === "highlights") return !!entry.block_id;
-    if (activeTab === "notes") return !entry.block_id;
-    return true;
-  });
-
-  const resetForm = () => {
+  const openCreateNote = () => {
     setEditingId(null);
-    setContent("");
-  };
-
-  const openCreate = () => {
-    resetForm();
+    setTitle("");
+    setDescription("");
+    setNoteDate(todayAsIsoDate());
     setModalOpen(true);
   };
 
-  const openEdit = (entry: JournalEntry) => {
-    setEditingId(entry.id);
-    setSelectedDayId(entry.day_id);
-    setContent(entry.content);
+  const openEditNote = (note: UserNote) => {
+    setEditingId(note.id);
+    setTitle(note.title);
+    setDescription(note.description);
+    setNoteDate(note.note_date);
     setModalOpen(true);
   };
 
-  const saveEntry = async () => {
+  const saveNote = async () => {
     if (!user) {
-      Alert.alert("Acesso", "Voce precisa estar logado.");
+      Alert.alert("Acesso", "Faça login para salvar anotações.");
       return;
     }
-    if (!selectedDayId) {
-      Alert.alert("Dia obrigatorio", "Selecione um dia para salvar a anotacao.");
+    if (!title.trim()) {
+      Alert.alert("Título obrigatório", "Informe um título.");
       return;
     }
-    if (!content.trim()) {
-      Alert.alert("Conteudo vazio", "Digite algo para salvar.");
+    if (!description.trim()) {
+      Alert.alert("Descrição obrigatória", "Informe uma descrição.");
+      return;
+    }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(noteDate)) {
+      Alert.alert("Data inválida", "Use o formato AAAA-MM-DD.");
       return;
     }
 
@@ -169,83 +137,98 @@ export default function JournalScreen() {
     try {
       if (editingId) {
         const { error } = await supabase
-          .from("devotional_journal")
+          .from("user_notes")
           .update({
-            day_id: selectedDayId,
-            content: content.trim(),
+            title: title.trim(),
+            description: description.trim(),
+            note_date: noteDate,
             updated_at: new Date().toISOString(),
           })
           .eq("id", editingId)
           .eq("user_id", user.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("devotional_journal").insert({
+        const { error } = await supabase.from("user_notes").insert({
           user_id: user.id,
-          day_id: selectedDayId,
-          block_id: null,
-          content: content.trim(),
+          title: title.trim(),
+          description: description.trim(),
+          note_date: noteDate,
         });
         if (error) throw error;
       }
 
       setModalOpen(false);
-      resetForm();
       await loadData();
     } catch (err: any) {
-      Alert.alert("Erro ao salvar", err.message ?? "Nao foi possivel salvar.");
+      Alert.alert("Erro", err.message ?? "Não foi possível salvar.");
     } finally {
       setSaving(false);
     }
   };
 
-  const deleteEntry = async (id: string) => {
+  const deleteNote = async (id: string) => {
     if (!user) return;
-    Alert.alert("Excluir anotacao", "Deseja realmente excluir esta anotacao?", [
+    Alert.alert("Excluir anotação", "Deseja excluir esta anotação?", [
       { text: "Cancelar", style: "cancel" },
       {
         text: "Excluir",
         style: "destructive",
         onPress: async () => {
-          try {
-            const { error } = await supabase
-              .from("devotional_journal")
-              .delete()
-              .eq("id", id)
-              .eq("user_id", user.id);
-            if (error) throw error;
-            await loadData();
-          } catch (err: any) {
-            Alert.alert("Erro ao excluir", err.message ?? "Nao foi possivel excluir.");
+          const { error } = await supabase
+            .from("user_notes")
+            .delete()
+            .eq("id", id)
+            .eq("user_id", user.id);
+          if (error) {
+            Alert.alert("Erro", error.message);
+            return;
           }
+          await loadData();
         },
       },
     ]);
   };
 
+  const removeHighlight = async (item: BibleHighlight) => {
+    if (!user) return;
+    const { error } = await supabase
+      .from("bible_highlights")
+      .delete()
+      .eq("id", item.id)
+      .eq("user_id", user.id);
+    if (error) {
+      Alert.alert("Erro", error.message);
+      return;
+    }
+    await loadData();
+  };
+
+  const emptyStateText =
+    activeTab === "highlights"
+      ? "Destaque versículos na aba Bíblia para vê-los aqui."
+      : "Crie notas com título, descrição e data.";
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
-      <Text style={[styles.title, { color: theme.text }]}>Diario</Text>
+      <Text style={[styles.title, { color: theme.text }]}>Anotações</Text>
 
       <View style={styles.tabsRow}>
-        {tabs.map((tab) => (
-          <Pressable
-            key={tab.key}
-            onPress={() => setActiveTab(tab.key)}
-            style={[
-              styles.tabPill,
-              activeTab === tab.key ? { borderColor: theme.text } : { borderColor: "transparent" },
-            ]}
-          >
-            <Text
-              style={[
-                styles.tabText,
-                { color: activeTab === tab.key ? theme.text : theme.textSecondary },
-              ]}
-            >
-              {tab.label}
-            </Text>
-          </Pressable>
-        ))}
+        <Pressable
+          style={[styles.tabPill, activeTab === "highlights" ? { borderColor: theme.text } : { borderColor: "transparent" }]}
+          onPress={() => setActiveTab("highlights")}
+        >
+          <Text style={[styles.tabText, { color: activeTab === "highlights" ? theme.text : theme.textSecondary }]}>
+            Destaques
+          </Text>
+        </Pressable>
+        <Pressable
+          style={[styles.tabPill, activeTab === "notes" ? { borderColor: theme.text } : { borderColor: "transparent" }]}
+          onPress={() => setActiveTab("notes")}
+        >
+          <Text style={[styles.tabText, { color: activeTab === "notes" ? theme.text : theme.textSecondary }]}>
+            Anotações
+          </Text>
+        </Pressable>
       </View>
 
       {loading ? (
@@ -254,104 +237,109 @@ export default function JournalScreen() {
         </View>
       ) : (
         <ScrollView contentContainerStyle={styles.scrollContent}>
-          {filteredEntries.length === 0 ? (
+          {activeTab === "highlights" ? (
+            highlights.length === 0 ? (
+              <View style={styles.emptyState}>
+                <Text style={styles.emptyIcon}>📌</Text>
+                <Text style={[styles.emptyText, { color: theme.textSecondary }]}>{emptyStateText}</Text>
+              </View>
+            ) : (
+              highlights.map((item) => (
+                <View key={item.id} style={[styles.card, { backgroundColor: theme.card }]}>
+                  <View style={styles.cardHeader}>
+                    <Text style={[styles.cardTitle, { color: Colors.palette.coral }]}>
+                      {item.book_name} {item.chapter}:{item.verse_number}
+                    </Text>
+                    <Pressable onPress={() => removeHighlight(item)} hitSlop={8}>
+                      <Ionicons name="bookmark" size={18} color="#C89D1D" />
+                    </Pressable>
+                  </View>
+                  <Text style={[styles.cardDescription, { color: theme.text }]}>{item.verse_text}</Text>
+                  <Text style={[styles.cardDate, { color: theme.textSecondary }]}>
+                    {new Date(item.created_at).toLocaleString("pt-BR")}
+                  </Text>
+                </View>
+              ))
+            )
+          ) : notes.length === 0 ? (
             <View style={styles.emptyState}>
-              <Text style={styles.emptyIcon}>📖</Text>
-              <Text style={[styles.emptyTitle, { color: theme.text }]}>Seu diario devocional</Text>
-              <Text style={[styles.emptyText, { color: theme.textSecondary }]}>
-                Crie anotacoes para registrar o que Deus falou ao seu coracao.
-              </Text>
+              <Text style={styles.emptyIcon}>🗒️</Text>
+              <Text style={[styles.emptyText, { color: theme.textSecondary }]}>{emptyStateText}</Text>
             </View>
           ) : (
-            filteredEntries.map((entry) => (
-              <View key={entry.id} style={[styles.card, { backgroundColor: theme.card }]}>
+            notes.map((item) => (
+              <View key={item.id} style={[styles.card, { backgroundColor: theme.card }]}>
                 <View style={styles.cardHeader}>
-                  <Text style={[styles.cardDay, { color: Colors.palette.coral }]}>
-                    Dia {entry.devotional_days?.day_number ?? "-"} - {entry.devotional_days?.title ?? "Sem titulo"}
-                  </Text>
+                  <Text style={[styles.cardTitle, { color: theme.text }]}>{item.title}</Text>
                   <View style={styles.row}>
-                    <Pressable onPress={() => openEdit(entry)} hitSlop={8}>
+                    <Pressable onPress={() => openEditNote(item)} hitSlop={8}>
                       <Ionicons name="create-outline" size={18} color={theme.textSecondary} />
                     </Pressable>
-                    <Pressable onPress={() => deleteEntry(entry.id)} hitSlop={8} style={{ marginLeft: 12 }}>
+                    <Pressable onPress={() => deleteNote(item.id)} hitSlop={8} style={{ marginLeft: 12 }}>
                       <Ionicons name="trash-outline" size={18} color={theme.textSecondary} />
                     </Pressable>
                   </View>
                 </View>
-                {!!entry.devotional_days?.devotional_series?.title && (
-                  <Text style={[styles.seriesText, { color: theme.textSecondary }]}>
-                    Serie: {entry.devotional_days.devotional_series.title}
-                  </Text>
-                )}
-                <Text style={[styles.cardContent, { color: theme.text }]}>{entry.content}</Text>
-                <Text style={[styles.cardDate, { color: theme.textSecondary }]}>
-                  {new Date(entry.updated_at ?? entry.created_at).toLocaleString("pt-BR")}
-                </Text>
+                <Text style={[styles.cardDescription, { color: theme.text }]}>{item.description}</Text>
+                <Text style={[styles.cardDate, { color: Colors.palette.coral }]}>Data: {item.note_date}</Text>
               </View>
             ))
           )}
         </ScrollView>
       )}
 
-      <Pressable style={[styles.fab, { backgroundColor: Colors.palette.coral }]} onPress={openCreate}>
-        <Ionicons name="pencil" size={24} color="#fff" />
-      </Pressable>
+      {activeTab === "notes" && (
+        <Pressable style={[styles.fab, { backgroundColor: Colors.palette.coral }]} onPress={openCreateNote}>
+          <Ionicons name="add" size={24} color="#fff" />
+        </Pressable>
+      )}
 
       <Modal visible={modalOpen} transparent animationType="slide" onRequestClose={() => setModalOpen(false)}>
         <View style={styles.modalOverlay}>
           <View style={[styles.modalCard, { backgroundColor: theme.card }]}>
             <Text style={[styles.modalTitle, { color: theme.text }]}>
-              {editingId ? "Editar anotacao" : "Nova anotacao"}
+              {editingId ? "Editar anotação" : "Nova anotação"}
             </Text>
 
-            <Text style={[styles.fieldLabel, { color: theme.textSecondary }]}>Dia</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.daysRow}>
-              {days.map((day) => (
-                <Pressable
-                  key={day.id}
-                  onPress={() => setSelectedDayId(day.id)}
-                  style={[
-                    styles.dayChip,
-                    {
-                      backgroundColor:
-                        selectedDayId === day.id ? Colors.palette.coral : theme.background,
-                    },
-                  ]}
-                >
-                  <Text
-                    style={{
-                      color: selectedDayId === day.id ? "#fff" : theme.text,
-                      fontWeight: "600",
-                    }}
-                  >
-                    Dia {day.day_number}
-                  </Text>
-                </Pressable>
-              ))}
-            </ScrollView>
+            <Text style={[styles.fieldLabel, { color: theme.textSecondary }]}>Título</Text>
+            <TextInput
+              value={title}
+              onChangeText={setTitle}
+              placeholder="Ex: Pedido de oração pela família"
+              placeholderTextColor={theme.textSecondary}
+              style={[styles.input, { color: theme.text, borderColor: theme.border, backgroundColor: theme.background }]}
+            />
 
-            <Text style={[styles.fieldLabel, { color: theme.textSecondary }]}>Anotacao</Text>
+            <Text style={[styles.fieldLabel, { color: theme.textSecondary }]}>Data (AAAA-MM-DD)</Text>
+            <TextInput
+              value={noteDate}
+              onChangeText={setNoteDate}
+              placeholder="2026-02-19"
+              placeholderTextColor={theme.textSecondary}
+              style={[styles.input, { color: theme.text, borderColor: theme.border, backgroundColor: theme.background }]}
+              autoCapitalize="none"
+            />
+
+            <Text style={[styles.fieldLabel, { color: theme.textSecondary }]}>Descrição</Text>
             <TextInput
               multiline
-              value={content}
-              onChangeText={setContent}
-              placeholder="Escreva sua anotacao..."
+              value={description}
+              onChangeText={setDescription}
+              placeholder="Escreva sua anotação..."
               placeholderTextColor={theme.textSecondary}
               style={[
                 styles.input,
-                {
-                  color: theme.text,
-                  borderColor: theme.border,
-                  backgroundColor: theme.background,
-                },
+                styles.multiline,
+                { color: theme.text, borderColor: theme.border, backgroundColor: theme.background },
               ]}
+              textAlignVertical="top"
             />
 
             <View style={styles.modalActions}>
               <Pressable style={[styles.btn, { backgroundColor: theme.background }]} onPress={() => setModalOpen(false)}>
                 <Text style={[styles.btnText, { color: theme.text }]}>Cancelar</Text>
               </Pressable>
-              <Pressable style={[styles.btn, { backgroundColor: Colors.palette.coral }]} onPress={saveEntry} disabled={saving}>
+              <Pressable style={[styles.btn, { backgroundColor: Colors.palette.coral }]} onPress={saveNote} disabled={saving}>
                 <Text style={[styles.btnText, { color: "#fff" }]}>{saving ? "Salvando..." : "Salvar"}</Text>
               </Pressable>
             </View>
@@ -363,14 +351,8 @@ export default function JournalScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  center: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
+  container: { flex: 1 },
+  center: { flex: 1, alignItems: "center", justifyContent: "center" },
   title: {
     fontSize: 28,
     fontWeight: "700",
@@ -403,13 +385,8 @@ const styles = StyleSheet.create({
     paddingVertical: 80,
   },
   emptyIcon: {
-    fontSize: 64,
+    fontSize: 56,
     marginBottom: 16,
-  },
-  emptyTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    marginBottom: 8,
   },
   emptyText: {
     fontSize: 15,
@@ -426,26 +403,22 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    marginBottom: 8,
   },
   row: {
     flexDirection: "row",
     alignItems: "center",
   },
-  cardDay: {
-    fontSize: 13,
+  cardTitle: {
+    fontSize: 15,
     fontWeight: "700",
   },
-  seriesText: {
-    fontSize: 12,
-    marginTop: 6,
-    marginBottom: 8,
-  },
-  cardContent: {
+  cardDescription: {
     fontSize: 15,
     lineHeight: 22,
   },
   cardDate: {
-    fontSize: 11,
+    fontSize: 12,
     marginTop: 10,
   },
   fab: {
@@ -472,7 +445,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 16,
-    maxHeight: "80%",
   },
   modalTitle: {
     fontSize: 18,
@@ -486,22 +458,14 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     textTransform: "uppercase",
   },
-  daysRow: {
-    paddingBottom: 6,
-  },
-  dayChip: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 12,
-    marginRight: 8,
-  },
   input: {
-    minHeight: 120,
     borderWidth: 1,
     borderRadius: 12,
     padding: 12,
-    textAlignVertical: "top",
     fontSize: 15,
+  },
+  multiline: {
+    minHeight: 120,
   },
   modalActions: {
     flexDirection: "row",

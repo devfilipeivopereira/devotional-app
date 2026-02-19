@@ -67,8 +67,11 @@ function TimePickerModal({
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <View style={styles.modalOverlay}>
-        <View style={[styles.modalContent, { backgroundColor: theme.card }]}>
+      <Pressable style={styles.modalOverlay} onPress={onClose}>
+        <Pressable
+          style={[styles.modalContent, { backgroundColor: theme.card }]}
+          onPress={() => {}}
+        >
           <Text style={[styles.modalTitle, { color: theme.text, fontFamily: "Nunito_700Bold" }]}>
             Escolher Horário
           </Text>
@@ -118,8 +121,8 @@ function TimePickerModal({
               <Text style={[styles.modalBtnText, { color: "#fff" }]}>Confirmar</Text>
             </Pressable>
           </View>
-        </View>
-      </View>
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 }
@@ -568,16 +571,18 @@ export default function SettingsScreen() {
         </Animated.View>
       </ScrollView>
 
-      <TimePickerModal
-        visible={showTimePicker}
-        onClose={() => {
-          setShowTimePicker(false);
-          setEditingReminder(null);
-        }}
-        onConfirm={handleTimeConfirm}
-        initialHour={editingReminder?.hour ?? 9}
-        initialMinute={editingReminder?.minute ?? 0}
-      />
+      {showTimePicker && (
+        <TimePickerModal
+          visible
+          onClose={() => {
+            setShowTimePicker(false);
+            setEditingReminder(null);
+          }}
+          onConfirm={handleTimeConfirm}
+          initialHour={editingReminder?.hour ?? 9}
+          initialMinute={editingReminder?.minute ?? 0}
+        />
+      )}
     </View>
   );
 }

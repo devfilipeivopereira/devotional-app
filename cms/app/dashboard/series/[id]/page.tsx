@@ -30,7 +30,7 @@ function BlockContentForm({
             return (
                 <>
                     <div className="form-group">
-                        <label className="form-label">Texto da Citação</label>
+                        <label className="form-label">💬 Texto da Citação</label>
                         <textarea
                             className="form-textarea"
                             value={(content.text as string) || ""}
@@ -39,7 +39,7 @@ function BlockContentForm({
                         />
                     </div>
                     <div className="form-group">
-                        <label className="form-label">Autor / Referência</label>
+                        <label className="form-label">✍️ Autor / Referência</label>
                         <input
                             className="form-input"
                             value={(content.author as string) || ""}
@@ -55,7 +55,7 @@ function BlockContentForm({
                 <>
                     <div className="form-row">
                         <div className="form-group">
-                            <label className="form-label">Livro</label>
+                            <label className="form-label">📖 Livro</label>
                             <input
                                 className="form-input"
                                 value={(content.book as string) || ""}
@@ -64,7 +64,7 @@ function BlockContentForm({
                             />
                         </div>
                         <div className="form-group">
-                            <label className="form-label">Capítulo</label>
+                            <label className="form-label">📄 Capítulo</label>
                             <input
                                 className="form-input"
                                 value={(content.chapter as string) || ""}
@@ -75,7 +75,7 @@ function BlockContentForm({
                     </div>
                     <div className="form-row">
                         <div className="form-group">
-                            <label className="form-label">Versículo Início</label>
+                            <label className="form-label">🔢 Versículo Início</label>
                             <input
                                 className="form-input"
                                 value={(content.verse_start as string) || ""}
@@ -84,7 +84,7 @@ function BlockContentForm({
                             />
                         </div>
                         <div className="form-group">
-                            <label className="form-label">Versículo Fim</label>
+                            <label className="form-label">🔢 Versículo Fim</label>
                             <input
                                 className="form-input"
                                 value={(content.verse_end as string) || ""}
@@ -95,7 +95,7 @@ function BlockContentForm({
                     </div>
                     <div className="form-group">
                         <label className="form-label">
-                            Texto (opcional — se vazio, busca da API)
+                            📝 Texto (opcional — se vazio, busca da API)
                         </label>
                         <textarea
                             className="form-textarea"
@@ -110,7 +110,7 @@ function BlockContentForm({
         case "reflection":
             return (
                 <div className="form-group">
-                    <label className="form-label">Texto da Reflexão</label>
+                    <label className="form-label">💭 Texto da Reflexão</label>
                     <textarea
                         className="form-textarea"
                         value={(content.text as string) || ""}
@@ -124,7 +124,7 @@ function BlockContentForm({
         case "prayer":
             return (
                 <div className="form-group">
-                    <label className="form-label">Texto da Oração</label>
+                    <label className="form-label">🙏 Texto da Oração</label>
                     <textarea
                         className="form-textarea"
                         value={(content.text as string) || ""}
@@ -139,7 +139,7 @@ function BlockContentForm({
             return (
                 <>
                     <div className="form-group">
-                        <label className="form-label">Duração (segundos)</label>
+                        <label className="form-label">⏱️ Duração (segundos)</label>
                         <input
                             type="number"
                             className="form-input"
@@ -150,7 +150,7 @@ function BlockContentForm({
                         />
                     </div>
                     <div className="form-group">
-                        <label className="form-label">Instruções</label>
+                        <label className="form-label">🌬️ Instruções</label>
                         <textarea
                             className="form-textarea"
                             value={(content.instructions as string) || ""}
@@ -165,7 +165,7 @@ function BlockContentForm({
             return (
                 <>
                     <div className="form-group">
-                        <label className="form-label">Texto</label>
+                        <label className="form-label">⚡ Texto</label>
                         <textarea
                             className="form-textarea"
                             value={(content.text as string) || ""}
@@ -175,7 +175,7 @@ function BlockContentForm({
                     </div>
                     <div className="form-row">
                         <div className="form-group">
-                            <label className="form-label">Call to Action</label>
+                            <label className="form-label">🎯 Call to Action</label>
                             <input
                                 className="form-input"
                                 value={(content.call_to_action as string) || ""}
@@ -184,7 +184,7 @@ function BlockContentForm({
                             />
                         </div>
                         <div className="form-group">
-                            <label className="form-label">Link (opcional)</label>
+                            <label className="form-label">🔗 Link (opcional)</label>
                             <input
                                 className="form-input"
                                 value={(content.link as string) || ""}
@@ -199,7 +199,7 @@ function BlockContentForm({
         case "journal_prompt":
             return (
                 <div className="form-group">
-                    <label className="form-label">Pergunta / Prompt</label>
+                    <label className="form-label">📝 Pergunta / Prompt</label>
                     <textarea
                         className="form-textarea"
                         value={(content.prompt as string) || ""}
@@ -213,7 +213,7 @@ function BlockContentForm({
             return (
                 <>
                     <div className="form-group">
-                        <label className="form-label">URL da Imagem</label>
+                        <label className="form-label">🖼️ URL da Imagem</label>
                         <input
                             className="form-input"
                             value={(content.image_id as string) || ""}
@@ -222,7 +222,7 @@ function BlockContentForm({
                         />
                     </div>
                     <div className="form-group">
-                        <label className="form-label">Legenda</label>
+                        <label className="form-label">✏️ Legenda</label>
                         <textarea
                             className="form-textarea"
                             value={(content.caption as string) || ""}
@@ -465,7 +465,7 @@ export default function SeriesDetailPage() {
                     className="btn btn-primary"
                     onClick={() => router.push("/dashboard/series")}
                 >
-                    Voltar
+                    ← Voltar
                 </button>
             </div>
         );
@@ -487,33 +487,32 @@ export default function SeriesDetailPage() {
             {/* Header */}
             <div className="page-header">
                 <div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                         <button
                             className="btn btn-secondary btn-sm btn-icon"
                             onClick={() => router.push("/dashboard/series")}
                         >
                             ←
                         </button>
-                        <h1 className="page-title">{series.title}</h1>
+                        <h1 className="page-title">📖 {series.title}</h1>
                         <span
-                            className={`badge ${series.is_published ? "badge-published" : "badge-draft"
-                                }`}
+                            className={`badge ${series.is_published ? "badge-published" : "badge-draft"}`}
                         >
-                            {series.is_published ? "Publicada" : "Rascunho"}
+                            {series.is_published ? "✅ Publicada" : "📝 Rascunho"}
                         </span>
                     </div>
                 </div>
             </div>
 
             {/* Two-column layout */}
-            <div style={{ display: "grid", gridTemplateColumns: "280px 1fr", gap: 24 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "300px 1fr", gap: 24 }}>
                 {/* Left: Series info + days */}
                 <div>
                     {/* Edit Series */}
                     <div className="card" style={{ marginBottom: 16 }}>
-                        <h4 style={{ fontSize: 13, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 12 }}>
-                            Dados da Série
-                        </h4>
+                        <div className="section-header">
+                            <span className="section-icon">⚙️</span> Dados da Série
+                        </div>
                         <div className="form-group">
                             <label className="form-label">Título</label>
                             <input
@@ -537,7 +536,7 @@ export default function SeriesDetailPage() {
                             disabled={saving}
                             style={{ width: "100%" }}
                         >
-                            Salvar
+                            💾 Salvar
                         </button>
                     </div>
 
@@ -551,22 +550,14 @@ export default function SeriesDetailPage() {
                                 marginBottom: 12,
                             }}
                         >
-                            <h4
-                                style={{
-                                    fontSize: 13,
-                                    fontWeight: 700,
-                                    color: "var(--text-muted)",
-                                    textTransform: "uppercase",
-                                    letterSpacing: 0.5,
-                                }}
-                            >
-                                Dias ({days.length})
-                            </h4>
+                            <div className="section-header" style={{ marginBottom: 0 }}>
+                                <span className="section-icon">📅</span> Dias ({days.length})
+                            </div>
                             <button
                                 className="btn btn-primary btn-sm"
                                 onClick={() => setShowCreateDay(true)}
                             >
-                                +
+                                ✨ +
                             </button>
                         </div>
 
@@ -579,42 +570,33 @@ export default function SeriesDetailPage() {
                                     padding: 16,
                                 }}
                             >
-                                Nenhum dia ainda
+                                📭 Nenhum dia ainda
                             </p>
                         ) : (
                             days.map((day) => (
                                 <div
                                     key={day.id}
                                     onClick={() => setSelectedDay(day)}
-                                    style={{
-                                        padding: "10px 12px",
-                                        borderRadius: 8,
-                                        cursor: "pointer",
-                                        background:
-                                            selectedDay?.id === day.id
-                                                ? "var(--coral-light)"
-                                                : "transparent",
-                                        marginBottom: 4,
-                                        display: "flex",
-                                        justifyContent: "space-between",
-                                        alignItems: "center",
-                                    }}
+                                    className={`day-item ${selectedDay?.id === day.id ? "active" : ""}`}
                                 >
-                                    <div>
-                                        <div
-                                            style={{
-                                                fontSize: 14,
-                                                fontWeight: 600,
-                                                color:
-                                                    selectedDay?.id === day.id
-                                                        ? "var(--coral)"
-                                                        : "var(--text)",
-                                            }}
-                                        >
-                                            Dia {day.day_number}
-                                        </div>
-                                        <div style={{ fontSize: 12, color: "var(--text-muted)" }}>
-                                            {day.title}
+                                    <div style={{ display: "flex", alignItems: "center" }}>
+                                        <span className="day-number">{day.day_number}</span>
+                                        <div>
+                                            <div
+                                                style={{
+                                                    fontSize: 14,
+                                                    fontWeight: 600,
+                                                    color:
+                                                        selectedDay?.id === day.id
+                                                            ? "var(--coral)"
+                                                            : "var(--text)",
+                                                }}
+                                            >
+                                                Dia {day.day_number}
+                                            </div>
+                                            <div style={{ fontSize: 12, color: "var(--text-muted)" }}>
+                                                {day.title}
+                                            </div>
                                         </div>
                                     </div>
                                     <button
@@ -647,10 +629,10 @@ export default function SeriesDetailPage() {
                             >
                                 <div>
                                     <h3 style={{ fontSize: 18, fontWeight: 700 }}>
-                                        Dia {selectedDay.day_number}: {selectedDay.title}
+                                        📋 Dia {selectedDay.day_number}: {selectedDay.title}
                                     </h3>
                                     <p style={{ fontSize: 13, color: "var(--text-muted)" }}>
-                                        {blocks.length} bloco{blocks.length !== 1 ? "s" : ""}
+                                        🧩 {blocks.length} bloco{blocks.length !== 1 ? "s" : ""}
                                     </p>
                                 </div>
                                 <button
@@ -661,7 +643,7 @@ export default function SeriesDetailPage() {
                                         setShowCreateBlock(true);
                                     }}
                                 >
-                                    + Novo Bloco
+                                    ✨ Novo Bloco
                                 </button>
                             </div>
 
@@ -679,7 +661,7 @@ export default function SeriesDetailPage() {
                                             setShowCreateBlock(true);
                                         }}
                                     >
-                                        + Novo Bloco
+                                        ✨ Novo Bloco
                                     </button>
                                 </div>
                             ) : (
@@ -707,7 +689,7 @@ export default function SeriesDetailPage() {
                                                     disabled={idx === 0}
                                                     title="Mover para cima"
                                                 >
-                                                    ↑
+                                                    ⬆️
                                                 </button>
                                                 <button
                                                     className="btn btn-secondary btn-sm btn-icon"
@@ -717,7 +699,7 @@ export default function SeriesDetailPage() {
                                                     disabled={idx === blocks.length - 1}
                                                     title="Mover para baixo"
                                                 >
-                                                    ↓
+                                                    ⬇️
                                                 </button>
                                                 <button
                                                     className="btn btn-secondary btn-sm btn-icon"
@@ -761,7 +743,7 @@ export default function SeriesDetailPage() {
                     onClick={() => setShowCreateDay(false)}
                 >
                     <div className="modal" onClick={(e) => e.stopPropagation()}>
-                        <h2 className="modal-title">Novo Dia</h2>
+                        <h2 className="modal-title">📅 Novo Dia</h2>
                         <form onSubmit={handleCreateDay}>
                             <div className="form-group">
                                 <label className="form-label">Título</label>
@@ -799,7 +781,7 @@ export default function SeriesDetailPage() {
                                     className="btn btn-primary"
                                     disabled={saving}
                                 >
-                                    Criar Dia
+                                    {saving ? "⏳ Criando..." : "🚀 Criar Dia"}
                                 </button>
                             </div>
                         </form>
@@ -820,7 +802,7 @@ export default function SeriesDetailPage() {
                     >
                         {!blockType ? (
                             <>
-                                <h2 className="modal-title">Escolher Tipo de Bloco</h2>
+                                <h2 className="modal-title">🎨 Escolher Tipo de Bloco</h2>
                                 <div className="block-type-grid">
                                     {BLOCK_TYPES.map((type) => (
                                         <div
@@ -859,7 +841,7 @@ export default function SeriesDetailPage() {
                                         onClick={handleCreateBlock}
                                         disabled={saving}
                                     >
-                                        {saving ? "Salvando..." : "Criar Bloco"}
+                                        {saving ? "⏳ Salvando..." : "🚀 Criar Bloco"}
                                     </button>
                                 </div>
                             </>
@@ -897,7 +879,7 @@ export default function SeriesDetailPage() {
                                 onClick={handleUpdateBlock}
                                 disabled={saving}
                             >
-                                {saving ? "Salvando..." : "Salvar"}
+                                {saving ? "⏳ Salvando..." : "💾 Salvar"}
                             </button>
                         </div>
                     </div>

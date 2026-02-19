@@ -1,0 +1,5 @@
+node_modules
+.next
+cms-dev.err.log
+cms-dev.out.log
+*.log

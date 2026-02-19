@@ -5,6 +5,7 @@ export interface DevotionalSeries {
     title: string;
     description: string | null;
     image_url: string | null;
+    tags: string[];
     is_published: boolean;
     created_at: string;
     updated_at: string;

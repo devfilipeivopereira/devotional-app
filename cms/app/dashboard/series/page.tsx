@@ -9,8 +9,18 @@ export default function SeriesListPage() {
   const [series, setSeries] = useState<DevotionalSeries[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
-  const [form, setForm] = useState({ title: "", description: "" });
+  const [form, setForm] = useState({ title: "", description: "", tags: "" });
   const [saving, setSaving] = useState(false);
+
+  const parseTags = (input: string) =>
+    Array.from(
+      new Set(
+        input
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter(Boolean)
+      )
+    );
 
   useEffect(() => {
     loadSeries();
@@ -33,10 +43,14 @@ export default function SeriesListPage() {
 
     const { error } = await supabase
       .from("devotional_series")
-      .insert({ title: form.title, description: form.description || null });
+      .insert({
+        title: form.title,
+        description: form.description || null,
+        tags: parseTags(form.tags),
+      });
 
     if (!error) {
-      setForm({ title: "", description: "" });
+      setForm({ title: "", description: "", tags: "" });
       setShowCreate(false);
       loadSeries();
     }
@@ -101,6 +115,15 @@ export default function SeriesListPage() {
                   placeholder="Uma descrição curta da série"
                 />
               </div>
+              <div className="form-group">
+                <label className="form-label">Tags (separadas por vírgula)</label>
+                <input
+                  className="form-input"
+                  value={form.tags}
+                  onChange={(e) => setForm({ ...form, tags: e.target.value })}
+                  placeholder="ansiedade, oração, família"
+                />
+              </div>
               <div className="modal-actions">
                 <button type="button" className="btn btn-secondary" onClick={() => setShowCreate(false)}>
                   Cancelar
@@ -138,6 +161,11 @@ export default function SeriesListPage() {
               </div>
 
               <p className="series-description">{s.description || "Sem descrição."}</p>
+              {s.tags?.length ? (
+                <div className="series-meta">🏷️ {s.tags.join(" • ")}</div>
+              ) : (
+                <div className="series-meta">🏷️ Sem tags</div>
+              )}
 
               <div className="series-meta">
                 📅 Criada em {new Date(s.created_at).toLocaleDateString("pt-BR")}

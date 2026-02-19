@@ -15,6 +15,7 @@ export const devotionalSeries = pgTable("devotional_series", {
   title: text("title").notNull(),
   description: text("description"),
   imageUrl: text("image_url"),
+  tags: text("tags").array().default(sql`'{}'::text[]`),
   isPublished: boolean("is_published").default(false),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),

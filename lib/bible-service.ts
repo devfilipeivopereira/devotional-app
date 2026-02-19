@@ -97,7 +97,7 @@ const CANONICAL_BOOKS: CanonicalBook[] = [
   { pt: "Esdras", en: "Ezra", abbrev: "ed", chapters: 10, testament: "VT" },
   { pt: "Neemias", en: "Nehemiah", abbrev: "ne", chapters: 13, testament: "VT" },
   { pt: "Ester", en: "Esther", abbrev: "et", chapters: 10, testament: "VT" },
-  { pt: "Jo", en: "Job", abbrev: "jo", chapters: 42, testament: "VT" },
+  { pt: "Jo", en: "Job", abbrev: "job", chapters: 42, testament: "VT" },
   { pt: "Salmos", en: "Psalms", abbrev: "sl", chapters: 150, testament: "VT" },
   { pt: "Proverbios", en: "Proverbs", abbrev: "pv", chapters: 31, testament: "VT" },
   { pt: "Eclesiastes", en: "Ecclesiastes", abbrev: "ec", chapters: 12, testament: "VT" },
@@ -122,7 +122,7 @@ const CANONICAL_BOOKS: CanonicalBook[] = [
   { pt: "Mateus", en: "Matthew", abbrev: "mt", chapters: 28, testament: "NT" },
   { pt: "Marcos", en: "Mark", abbrev: "mc", chapters: 16, testament: "NT" },
   { pt: "Lucas", en: "Luke", abbrev: "lc", chapters: 24, testament: "NT" },
-  { pt: "Joao", en: "John", abbrev: "joa", chapters: 21, testament: "NT" },
+  { pt: "Joao", en: "John", abbrev: "jo", chapters: 21, testament: "NT" },
   { pt: "Atos", en: "Acts", abbrev: "at", chapters: 28, testament: "NT" },
   { pt: "Romanos", en: "Romans", abbrev: "rm", chapters: 16, testament: "NT" },
   { pt: "1 Corintios", en: "1 Corinthians", abbrev: "1co", chapters: 16, testament: "NT" },
@@ -148,9 +148,78 @@ const CANONICAL_BOOKS: CanonicalBook[] = [
   { pt: "Apocalipse", en: "Revelation", abbrev: "ap", chapters: 22, testament: "NT" },
 ];
 
+const PT_BOOK_NAMES: Record<string, string> = {
+  gn: "Gênesis",
+  ex: "Êxodo",
+  lv: "Levítico",
+  nm: "Números",
+  dt: "Deuteronômio",
+  js: "Josué",
+  jz: "Juízes",
+  rt: "Rute",
+  "1sm": "1 Samuel",
+  "2sm": "2 Samuel",
+  "1rs": "1 Reis",
+  "2rs": "2 Reis",
+  "1cr": "1 Crônicas",
+  "2cr": "2 Crônicas",
+  ed: "Esdras",
+  ne: "Neemias",
+  et: "Ester",
+  job: "Jó",
+  sl: "Salmos",
+  pv: "Provérbios",
+  ec: "Eclesiastes",
+  ct: "Cânticos",
+  is: "Isaías",
+  jr: "Jeremias",
+  lm: "Lamentações",
+  ez: "Ezequiel",
+  dn: "Daniel",
+  os: "Oséias",
+  jl: "Joel",
+  am: "Amós",
+  ob: "Obadias",
+  jn: "Jonas",
+  mq: "Miquéias",
+  na: "Naum",
+  hc: "Habacuque",
+  sf: "Sofonias",
+  ag: "Ageu",
+  zc: "Zacarias",
+  ml: "Malaquias",
+  mt: "Mateus",
+  mc: "Marcos",
+  lc: "Lucas",
+  jo: "João",
+  at: "Atos",
+  rm: "Romanos",
+  "1co": "1 Coríntios",
+  "2co": "2 Coríntios",
+  gl: "Gálatas",
+  ef: "Efésios",
+  fp: "Filipenses",
+  cl: "Colossenses",
+  "1ts": "1 Tessalonicenses",
+  "2ts": "2 Tessalonicenses",
+  "1tm": "1 Timóteo",
+  "2tm": "2 Timóteo",
+  tt: "Tito",
+  fm: "Filemom",
+  hb: "Hebreus",
+  tg: "Tiago",
+  "1pe": "1 Pedro",
+  "2pe": "2 Pedro",
+  "1jo": "1 João",
+  "2jo": "2 João",
+  "3jo": "3 João",
+  jd: "Judas",
+  ap: "Apocalipse",
+};
+
 const FALLBACK_BOOKS: BibleBook[] = CANONICAL_BOOKS.map((book) => ({
   abbrev: { pt: book.abbrev, en: book.en.toLowerCase().replace(/\s+/g, "") },
-  name: book.pt,
+  name: PT_BOOK_NAMES[book.abbrev] ?? book.pt,
   author: "",
   group: "",
   chapters: book.chapters,
@@ -170,18 +239,17 @@ const BOOK_NAME_ALIASES: Record<string, string> = {
   "deuteronomio": "dt",
   "josue": "js",
   "juizes": "jz",
-  "joao": "joa",
-  "jó": "jo",
+  "joao": "jo",
+  "jó": "job",
   "jo": "jo",
+  "job": "job",
 };
 
 export const BOOK_ABBREVS: Record<string, string> = Object.fromEntries(
-  CANONICAL_BOOKS.map((book) => [book.pt, book.abbrev])
+  Object.entries(PT_BOOK_NAMES).map(([abbrev, name]) => [name, abbrev])
 );
 
-export const BOOK_NAMES: Record<string, string> = Object.fromEntries(
-  CANONICAL_BOOKS.map((book) => [book.abbrev, book.pt])
-);
+export const BOOK_NAMES: Record<string, string> = PT_BOOK_NAMES;
 
 function normalizeKey(value: string): string {
   return value
@@ -223,7 +291,7 @@ async function getChapterFromSecondary(abbrev: string, chapter: number): Promise
   const reference = encodeURIComponent(`${englishBook} ${chapter}`);
   const data = await fetchJson<{
     verses: Array<{ verse: number; text: string }>;
-  }>(`${SECONDARY_API_URL}/${reference}`);
+  }>(`${SECONDARY_API_URL}/${reference}?translation=almeida`);
 
   return {
     book: {
@@ -300,7 +368,7 @@ export async function getRandomVerse(
       { abbrev: "sl", chapter: 23, verse: 1 },
       { abbrev: "pv", chapter: 3, verse: 5 },
       { abbrev: "mt", chapter: 11, verse: 28 },
-      { abbrev: "joa", chapter: 3, verse: 16 },
+      { abbrev: "jo", chapter: 3, verse: 16 },
       { abbrev: "rm", chapter: 8, verse: 28 },
     ];
     const pick = references[Math.floor(Math.random() * references.length)];
@@ -331,7 +399,11 @@ export async function getVerseRange(
 
 export async function getBooks(): Promise<BibleBook[]> {
   try {
-    return await fetchJson<BibleBook[]>(`${PRIMARY_API_URL}/books`, getHeaders());
+    const books = await fetchJson<BibleBook[]>(`${PRIMARY_API_URL}/books`, getHeaders());
+    return books.map((book) => ({
+      ...book,
+      name: BOOK_NAMES[book.abbrev.pt] ?? book.name,
+    }));
   } catch {
     return FALLBACK_BOOKS;
   }

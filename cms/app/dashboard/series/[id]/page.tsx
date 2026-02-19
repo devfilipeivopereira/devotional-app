@@ -254,6 +254,7 @@ export default function SeriesDetailPage() {
     // Edit series form
     const [editTitle, setEditTitle] = useState("");
     const [editDesc, setEditDesc] = useState("");
+    const [editTags, setEditTags] = useState("");
 
     // Create day modal
     const [showCreateDay, setShowCreateDay] = useState(false);
@@ -286,6 +287,7 @@ export default function SeriesDetailPage() {
             setSeries(seriesData);
             setEditTitle(seriesData.title);
             setEditDesc(seriesData.description || "");
+            setEditTags(Array.isArray(seriesData.tags) ? seriesData.tags.join(", ") : "");
         }
 
         const { data: daysData } = await supabase
@@ -323,9 +325,17 @@ export default function SeriesDetailPage() {
     const handleUpdateSeries = async () => {
         if (!series) return;
         setSaving(true);
+        const tags = Array.from(
+            new Set(
+                editTags
+                    .split(",")
+                    .map((tag) => tag.trim())
+                    .filter(Boolean)
+            )
+        );
         await supabase
             .from("devotional_series")
-            .update({ title: editTitle, description: editDesc || null })
+            .update({ title: editTitle, description: editDesc || null, tags })
             .eq("id", series.id);
         setSaving(false);
         loadSeries();
@@ -529,6 +539,15 @@ export default function SeriesDetailPage() {
                                 value={editDesc}
                                 onChange={(e) => setEditDesc(e.target.value)}
                                 style={{ minHeight: 60 }}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label className="form-label">Tags (separadas por vírgula)</label>
+                            <input
+                                className="form-input"
+                                value={editTags}
+                                onChange={(e) => setEditTags(e.target.value)}
+                                placeholder="ansiedade, oração, família"
                             />
                         </div>
                         <button

@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Platform, Linking, Pressable } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { queryClient } from "@/lib/query-client";
 import { NotificationsProvider } from "@/lib/notifications-context";
@@ -165,24 +166,26 @@ export default function RootLayout() {
         <ThemeProvider>
           <AuthProvider>
             <GestureHandlerRootView style={styles.flex}>
-              <KeyboardProvider>
-                {!isReady ? (
-                  <View style={styles.flex}>
-                    <LoadingSplash />
-                  </View>
-                ) : (
-                  <>
-                    <DeepLinkHandler />
-                    <WebLayoutWrapper>
-                      <NotificationsProvider>
-                        <DevotionalProvider>
-                          <RootLayoutNav />
-                        </DevotionalProvider>
-                      </NotificationsProvider>
-                    </WebLayoutWrapper>
-                  </>
-                )}
-              </KeyboardProvider>
+              <SafeAreaProvider>
+                <KeyboardProvider>
+                  {!isReady ? (
+                    <View style={styles.flex}>
+                      <LoadingSplash />
+                    </View>
+                  ) : (
+                    <>
+                      <DeepLinkHandler />
+                      <WebLayoutWrapper>
+                        <NotificationsProvider>
+                          <DevotionalProvider>
+                            <RootLayoutNav />
+                          </DevotionalProvider>
+                        </NotificationsProvider>
+                      </WebLayoutWrapper>
+                    </>
+                  )}
+                </KeyboardProvider>
+              </SafeAreaProvider>
             </GestureHandlerRootView>
           </AuthProvider>
         </ThemeProvider>

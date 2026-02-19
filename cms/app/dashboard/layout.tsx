@@ -1,4 +1,4 @@
-﻿"use client";
+&#xFEFF;"use client";
 
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
@@ -7,8 +7,8 @@ import { supabase } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
 
 const NAV_ITEMS = [
-  { href: "/dashboard", label: "Dashboard", icon: "DB" },
-  { href: "/dashboard/series", label: "Series", icon: "SR" },
+  { href: "/dashboard", label: "Dashboard", icon: "📊" },
+  { href: "/dashboard/series", label: "Séries", icon: "📚" },
 ];
 
 export default function DashboardLayout({
@@ -84,12 +84,12 @@ export default function DashboardLayout({
   if (fatalError) {
     return (
       <div className="loading" style={{ minHeight: "100vh", gap: 12, flexDirection: "column" }}>
-        <div style={{ fontSize: 16, fontWeight: 600 }}>Erro ao carregar o CMS</div>
+        <div style={{ fontSize: 16, fontWeight: 600 }}>❌ Erro ao carregar o CMS</div>
         <div style={{ color: "var(--text-muted)", maxWidth: 520, textAlign: "center" }}>
           {fatalError}
         </div>
         <button className="btn btn-secondary" onClick={() => window.location.reload()}>
-          Tentar novamente
+          🔄 Tentar novamente
         </button>
       </div>
     );
@@ -99,8 +99,11 @@ export default function DashboardLayout({
     <div className="app-layout">
       <aside className="sidebar">
         <div className="sidebar-logo">
-          Devocional
-          <span>CMS Admin</span>
+          <div className="logo-icon">🕊️</div>
+          <div>
+            Devocional
+            <span>CMS Admin</span>
+          </div>
         </div>
 
         <nav className="sidebar-nav">
@@ -110,7 +113,7 @@ export default function DashboardLayout({
               href={item.href}
               className={`sidebar-link ${pathname === item.href || pathname.startsWith(item.href + "/") ? "active" : ""}`}
             >
-              <span className="icon icon-pill">{item.icon}</span>
+              <span className="nav-icon">{item.icon}</span>
               {item.label}
             </Link>
           ))}
@@ -120,7 +123,7 @@ export default function DashboardLayout({
           <div className="sidebar-user">
             <div className="avatar">{user?.email?.charAt(0).toUpperCase() || "U"}</div>
             <div style={{ flex: 1, overflow: "hidden" }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>Admin</div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>👤 Admin</div>
               <div
                 style={{
                   fontSize: 11,
@@ -136,9 +139,9 @@ export default function DashboardLayout({
           <button
             onClick={handleLogout}
             className="btn btn-secondary btn-sm"
-            style={{ width: "100%", marginTop: 8, justifyContent: "center" }}
+            style={{ width: "100%", marginTop: 8, justifyContent: "center", color: "rgba(255,255,255,0.7)", borderColor: "rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.05)" }}
           >
-            Sair
+            🚪 Sair
           </button>
         </div>
       </aside>

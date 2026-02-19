@@ -1,4 +1,4 @@
-﻿"use client";
+&#xFEFF;"use client";
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
@@ -11,14 +11,14 @@ interface Stats {
 }
 
 const BLOCK_TYPES = [
-  { icon: "QT", label: "Citacao" },
-  { icon: "SC", label: "Escritura" },
-  { icon: "RF", label: "Reflexao" },
-  { icon: "PR", label: "Oracao" },
-  { icon: "BR", label: "Respiracao" },
-  { icon: "AC", label: "Acao" },
-  { icon: "JR", label: "Diario" },
-  { icon: "IM", label: "Imagem" },
+  { icon: "💬", label: "Citação" },
+  { icon: "📖", label: "Escritura" },
+  { icon: "💭", label: "Reflexão" },
+  { icon: "🙏", label: "Oração" },
+  { icon: "🌬️", label: "Respiração" },
+  { icon: "⚡", label: "Ação" },
+  { icon: "📝", label: "Diário" },
+  { icon: "🖼️", label: "Imagem" },
 ];
 
 export default function DashboardPage() {
@@ -80,10 +80,10 @@ export default function DashboardPage() {
   if (error) {
     return (
       <div className="loading" style={{ minHeight: "50vh", gap: 12, flexDirection: "column" }}>
-        <div style={{ fontSize: 16, fontWeight: 600 }}>Erro no dashboard</div>
+        <div style={{ fontSize: 16, fontWeight: 600 }}>❌ Erro no dashboard</div>
         <div style={{ color: "var(--text-muted)", maxWidth: 520, textAlign: "center" }}>{error}</div>
         <button className="btn btn-secondary" onClick={loadStats}>
-          Tentar novamente
+          🔄 Tentar novamente
         </button>
       </div>
     );
@@ -93,45 +93,45 @@ export default function DashboardPage() {
     <div>
       <div className="page-header">
         <div>
-          <h1 className="page-title">Dashboard</h1>
-          <p className="page-subtitle">Visao geral do conteudo devocional</p>
+          <h1 className="page-title">📊 Dashboard</h1>
+          <p className="page-subtitle">Visão geral do conteúdo devocional</p>
         </div>
       </div>
 
       <section className="dashboard-hero card">
         <div>
-          <p className="eyebrow">Painel</p>
-          <h2 className="hero-title">Gestao simples, publicacao rapida</h2>
+          <p className="eyebrow">✨ Painel</p>
+          <h2 className="hero-title">Gestão simples, publicação rápida</h2>
           <p className="hero-text">
-            Crie series, organize dias e publique experiencias devocionais com um fluxo limpo e objetivo.
+            Crie séries, organize dias e publique experiências devocionais com um fluxo limpo e objetivo.
           </p>
         </div>
       </section>
 
       <div className="stats-grid modern-stats">
         <div className="stat-card kpi-card">
-          <div className="kpi-icon">SR</div>
+          <div className="kpi-icon">📚</div>
           <div>
             <div className="stat-value">{stats.series}</div>
-            <div className="stat-label">Series</div>
+            <div className="stat-label">Séries</div>
           </div>
         </div>
         <div className="stat-card kpi-card">
-          <div className="kpi-icon">PB</div>
+          <div className="kpi-icon">✅</div>
           <div>
             <div className="stat-value">{stats.published}</div>
             <div className="stat-label">Publicadas</div>
           </div>
         </div>
         <div className="stat-card kpi-card">
-          <div className="kpi-icon">DY</div>
+          <div className="kpi-icon">📅</div>
           <div>
             <div className="stat-value">{stats.days}</div>
             <div className="stat-label">Dias</div>
           </div>
         </div>
         <div className="stat-card kpi-card">
-          <div className="kpi-icon">BL</div>
+          <div className="kpi-icon">🧩</div>
           <div>
             <div className="stat-value">{stats.blocks}</div>
             <div className="stat-label">Blocos</div>
@@ -140,9 +140,9 @@ export default function DashboardPage() {
       </div>
 
       <section className="card">
-        <h3 className="card-title">Tipos de bloco</h3>
+        <h3 className="card-title">🎨 Tipos de bloco</h3>
         <p className="page-subtitle" style={{ marginBottom: 16 }}>
-          Biblioteca padrao para montar cada sessao devocional.
+          Biblioteca padrão para montar cada sessão devocional.
         </p>
         <div className="feature-grid">
           {BLOCK_TYPES.map((block) => (

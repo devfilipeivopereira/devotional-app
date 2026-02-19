@@ -38,14 +38,15 @@ export default function LoginPage() {
   return (
     <div className="login-page">
       <div className="login-card">
-        <h1 className="login-title">🕊️ Devocional</h1>
+        <div className="login-logo-icon">🕊️</div>
+        <h1 className="login-title">Devocional</h1>
         <p className="login-subtitle">CMS — Gerenciador de Conteúdo</p>
 
-        {error && <div className="login-error">{error}</div>}
+        {error && <div className="login-error">⚠️ {error}</div>}
 
         <form onSubmit={handleLogin}>
           <div className="form-group">
-            <label className="form-label">Email</label>
+            <label className="form-label">📧 Email</label>
             <input
               type="email"
               className="form-input"
@@ -57,7 +58,7 @@ export default function LoginPage() {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Senha</label>
+            <label className="form-label">🔒 Senha</label>
             <input
               type="password"
               className="form-input"
@@ -71,12 +72,16 @@ export default function LoginPage() {
           <button
             type="submit"
             className="btn btn-primary"
-            style={{ width: "100%", justifyContent: "center" }}
+            style={{ width: "100%", justifyContent: "center", padding: "12px 20px", fontSize: 14 }}
             disabled={loading}
           >
-            {loading ? "Entrando..." : "Entrar"}
+            {loading ? "⏳ Entrando..." : "🚀 Entrar"}
           </button>
         </form>
+
+        <div className="login-footer">
+          🔐 Acesso restrito a administradores
+        </div>
       </div>
     </div>
   );

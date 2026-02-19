@@ -7,8 +7,8 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { queryClient } from "@/lib/query-client";
-import { HabitsProvider } from "@/lib/habits-context";
 import { NotificationsProvider } from "@/lib/notifications-context";
+import { DevotionalProvider } from "@/lib/devotional-context";
 import { ThemeProvider } from "@/lib/ThemeContext";
 import { useTheme } from "@/lib/useTheme";
 import { AuthProvider } from "@/lib/AuthContext";
@@ -89,13 +89,13 @@ function DeepLinkHandler() {
   return null;
 }
 
-const SPLASH_BG = "#120b2d";
+const SPLASH_BG = "#1A1A2E";
 
 function LoadingSplash() {
   return (
     <View style={[StyleSheet.absoluteFill, styles.splash]}>
       <View style={styles.splashContent}>
-        <Text style={styles.splashTitle}>HabitFlow</Text>
+        <Text style={styles.splashTitle}>Devocional</Text>
       </View>
       <Text style={styles.splashFooter}>By "@filipeivopereira"</Text>
     </View>
@@ -111,7 +111,7 @@ function WebLayoutWrapper({ children }: { children: React.ReactNode }) {
     <View style={[styles.flex, styles.webFullBg, { backgroundColor: theme.background }]}>
       <View style={[styles.webHeader, { backgroundColor: theme.background, borderBottomColor: theme.border }]}>
         <View style={styles.webHeaderInner}>
-          <Text style={[styles.webLogo, { color: Colors.palette.teal }]}>HabitFlow</Text>
+          <Text style={[styles.webLogo, { color: Colors.palette.coral }]}>Devocional</Text>
         </View>
       </View>
       <View style={[styles.flex, styles.webContentArea]}>{children}</View>
@@ -131,16 +131,17 @@ function RootLayoutNav() {
       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen
-        name="habit-form"
+        name="profile"
         options={{
           presentation: "modal",
           headerShown: false,
         }}
       />
       <Stack.Screen
-        name="habit-detail"
+        name="session"
         options={{
           headerShown: false,
+          animation: "slide_from_bottom",
         }}
       />
     </Stack>
@@ -173,11 +174,11 @@ export default function RootLayout() {
                   <>
                     <DeepLinkHandler />
                     <WebLayoutWrapper>
-                      <HabitsProvider>
-                        <NotificationsProvider>
+                      <NotificationsProvider>
+                        <DevotionalProvider>
                           <RootLayoutNav />
-                        </NotificationsProvider>
-                      </HabitsProvider>
+                        </DevotionalProvider>
+                      </NotificationsProvider>
                     </WebLayoutWrapper>
                   </>
                 )}

@@ -12,7 +12,7 @@ export function useTheme() {
       theme: ctx.theme,
       isDark: ctx.isDark,
       palette: ctx.palette,
-      habitColors: ctx.habitColors,
+
       preference: ctx.preference,
       setThemePreference: ctx.setPreference,
     };
@@ -24,8 +24,8 @@ export function useTheme() {
     theme,
     isDark,
     palette: Colors.palette,
-    habitColors: Colors.habitColors,
+
     preference: "system" as const,
-    setThemePreference: async (_p: "light" | "dark" | "system") => {},
+    setThemePreference: async (_p: "light" | "dark" | "system") => { },
   };
 }

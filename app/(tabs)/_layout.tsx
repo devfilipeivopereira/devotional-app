@@ -15,17 +15,21 @@ function NativeTabLayout() {
         <Icon sf={{ default: "checkmark.circle", selected: "checkmark.circle.fill" }} />
         <Label>Hoje</Label>
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="calendar">
-        <Icon sf={{ default: "calendar", selected: "calendar" }} />
-        <Label>Calendario</Label>
+      <NativeTabs.Trigger name="explore">
+        <Icon sf={{ default: "safari", selected: "safari.fill" }} />
+        <Label>Explorar</Label>
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="stats">
-        <Icon sf={{ default: "chart.bar", selected: "chart.bar.fill" }} />
-        <Label>Progresso</Label>
+      <NativeTabs.Trigger name="bible">
+        <Icon sf={{ default: "book", selected: "book.fill" }} />
+        <Label>Bíblia</Label>
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="settings">
-        <Icon sf={{ default: "gearshape", selected: "gearshape.fill" }} />
-        <Label>Configurações</Label>
+      <NativeTabs.Trigger name="prayers">
+        <Icon sf={{ default: "hands.sparkles", selected: "hands.sparkles.fill" }} />
+        <Label>Orações</Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="journal">
+        <Icon sf={{ default: "pencil.and.outline", selected: "pencil.and.outline" }} />
+        <Label>Diário</Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );
@@ -40,7 +44,7 @@ function ClassicTabLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: Colors.palette.teal,
+        tabBarActiveTintColor: Colors.palette.coral,
         tabBarInactiveTintColor: isDark ? Colors.dark.tabIconDefault : Colors.light.tabIconDefault,
         tabBarStyle: {
           position: "absolute" as const,
@@ -68,29 +72,38 @@ function ClassicTabLayout() {
         }}
       />
       <Tabs.Screen
-        name="calendar"
+        name="explore"
         options={{
-          title: "Calendario",
+          title: "Explorar",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="calendar-outline" size={size} color={color} />
+            <Ionicons name="compass-outline" size={size} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="stats"
+        name="bible"
         options={{
-          title: "Progresso",
+          title: "Bíblia",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="stats-chart-outline" size={size} color={color} />
+            <Ionicons name="book-outline" size={size} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="settings"
+        name="prayers"
         options={{
-          title: "Configurações",
+          title: "Orações",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="settings-outline" size={size} color={color} />
+            <Ionicons name="hand-left-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="journal"
+        options={{
+          title: "Diário",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="create-outline" size={size} color={color} />
           ),
         }}
       />

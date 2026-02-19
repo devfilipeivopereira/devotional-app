@@ -168,12 +168,12 @@ export default function ResetPasswordScreen() {
             </Text>
             {Platform.OS === "web" && typeof navigator !== "undefined" && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ? (
               <Text style={[styles.subtitle, { color: theme.textSecondary, fontFamily: "Nunito_400Regular", marginBottom: 24 }]}>
-                Pode fechar esta página e abrir o aplicativo HabitFlow para entrar.
+                Pode fechar esta página e abrir o aplicativo Devocional para entrar.
               </Text>
             ) : null}
             <Pressable
               onPress={() => router.replace("/(auth)")}
-              style={[styles.button, { backgroundColor: palette.teal }]}
+              style={[styles.button, { backgroundColor: palette.coral }]}
             >
               <Text style={[styles.buttonText, { fontFamily: "Nunito_600SemiBold" }]}>
                 Voltar ao login
@@ -233,7 +233,7 @@ export default function ResetPasswordScreen() {
             <Pressable
               onPress={handleVerifyCode}
               disabled={codeLoading}
-              style={[styles.button, { backgroundColor: palette.teal }]}
+              style={[styles.button, { backgroundColor: palette.coral }]}
             >
               {codeLoading ? (
                 <ActivityIndicator color="#fff" />
@@ -291,7 +291,7 @@ export default function ResetPasswordScreen() {
             <Pressable
               onPress={handleSubmit}
               disabled={loading}
-              style={[styles.button, { backgroundColor: palette.teal }]}
+              style={[styles.button, { backgroundColor: palette.coral }]}
             >
               {loading ? (
                 <ActivityIndicator color="#fff" />

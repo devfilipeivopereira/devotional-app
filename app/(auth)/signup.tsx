@@ -129,7 +129,7 @@ export default function SignupScreen() {
         <Pressable
           onPress={handleSignUp}
           disabled={loading}
-          style={[styles.button, { backgroundColor: palette.teal }]}
+          style={[styles.button, { backgroundColor: palette.coral }]}
         >
           {loading ? (
             <ActivityIndicator color="#fff" />
@@ -146,7 +146,7 @@ export default function SignupScreen() {
         >
           <Text style={[styles.link, { color: theme.textSecondary, fontFamily: "Nunito_400Regular" }]}>
             Já tem conta?{" "}
-            <Text style={[styles.linkBold, { color: palette.teal, fontFamily: "Nunito_600SemiBold" }]}>
+            <Text style={[styles.linkBold, { color: palette.coral, fontFamily: "Nunito_600SemiBold" }]}>
               Entrar
             </Text>
           </Text>

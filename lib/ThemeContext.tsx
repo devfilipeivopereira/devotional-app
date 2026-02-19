@@ -13,7 +13,7 @@ import Colors from "@/constants/colors";
 
 export type ThemePreference = "light" | "dark" | "system";
 
-const STORAGE_KEY = "@habitflow_theme";
+const STORAGE_KEY = "@devocional_theme";
 
 type ThemeContextValue = {
   preference: ThemePreference;
@@ -21,7 +21,7 @@ type ThemeContextValue = {
   isDark: boolean;
   theme: typeof Colors.light;
   palette: typeof Colors.palette;
-  habitColors: typeof Colors.habitColors;
+
 };
 
 export const ThemeContext = createContext<ThemeContextValue | null>(null);
@@ -59,7 +59,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       isDark,
       theme,
       palette: Colors.palette,
-      habitColors: Colors.habitColors,
+
     }),
     [preference, isDark, theme]
   );

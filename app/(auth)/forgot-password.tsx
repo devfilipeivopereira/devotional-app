@@ -62,7 +62,7 @@ export default function ForgotPasswordScreen() {
         showsVerticalScrollIndicator={false}
       >
         <Pressable onPress={() => router.back()} style={styles.backWrap}>
-          <Text style={[styles.back, { color: palette.teal, fontFamily: "Nunito_600SemiBold" }]}>
+          <Text style={[styles.back, { color: palette.coral, fontFamily: "Nunito_600SemiBold" }]}>
             ← Voltar
           </Text>
         </Pressable>
@@ -102,7 +102,7 @@ export default function ForgotPasswordScreen() {
             <Pressable
               onPress={handleSubmit}
               disabled={loading}
-              style={[styles.button, { backgroundColor: palette.teal }]}
+              style={[styles.button, { backgroundColor: palette.coral }]}
             >
               {loading ? (
                 <ActivityIndicator color="#fff" />
@@ -121,15 +121,15 @@ export default function ForgotPasswordScreen() {
               onPress={() => router.push({ pathname: "/(auth)/reset-password", params: { email: email.trim() } })}
               style={[styles.linkButton]}
             >
-              <Text style={[styles.linkText, { color: palette.teal, fontFamily: "Nunito_600SemiBold" }]}>
+              <Text style={[styles.linkText, { color: palette.coral, fontFamily: "Nunito_600SemiBold" }]}>
                 Já tenho o código do e-mail
               </Text>
             </Pressable>
             <Pressable
               onPress={() => router.replace("/(auth)")}
-              style={[styles.button, styles.buttonSecondary, { borderColor: palette.teal }]}
+              style={[styles.button, styles.buttonSecondary, { borderColor: palette.coral }]}
             >
-              <Text style={[styles.buttonTextSecondary, { color: palette.teal, fontFamily: "Nunito_600SemiBold" }]}>
+              <Text style={[styles.buttonTextSecondary, { color: palette.coral, fontFamily: "Nunito_600SemiBold" }]}>
                 Voltar ao login
               </Text>
             </Pressable>

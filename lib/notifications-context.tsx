@@ -47,7 +47,7 @@ interface NotificationsContextValue {
 
 const NotificationsContext = createContext<NotificationsContextValue | null>(null);
 
-const STORAGE_KEY = "@habitflow_notification_settings";
+const STORAGE_KEY = "@devocional_notification_settings";
 
 const DEFAULT_SETTINGS: NotificationSettings = {
   enabled: false,
@@ -58,12 +58,12 @@ const DEFAULT_SETTINGS: NotificationSettings = {
 };
 
 const REMINDER_MESSAGES = [
-  "Hora de conferir seus hábitos de hoje!",
-  "Não esqueça dos seus hábitos!",
-  "Seus hábitos estão esperando por você!",
-  "Mantenha sua sequência! Confira seus hábitos.",
-  "Um passo de cada vez. Veja seus hábitos de hoje.",
-  "Consistência é a chave! Abra o HabitFlow.",
+  "Hora do seu devocional diário!",
+  "Não esqueça do seu devocional!",
+  "Seu momento com Deus está esperando.",
+  "Mantenha sua sequência! Faça o devocional de hoje.",
+  "Um passo de cada vez. Abra seu devocional.",
+  "Consistência é a chave! Abra o Devocional.",
 ];
 
 function getRandomMessage(): string {
@@ -107,7 +107,7 @@ async function scheduleReminders(settings: NotificationSettings): Promise<void> 
   for (const reminder of activeReminders) {
     await Notifications.scheduleNotificationAsync({
       content: {
-        title: "HabitFlow",
+        title: "Devocional",
         body: getRandomMessage(),
         sound: true,
       },

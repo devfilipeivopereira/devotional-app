@@ -1,150 +1,122 @@
-# HabitFlow
+# Devocional App
 
-App de rastreamento de hábitos para iOS, Android e Web. Desenvolvido com **Expo (React Native)** e **Supabase** para sincronização na nuvem.
+Aplicativo devocional inspirado no Glorify, com foco em simplicidade, beleza e profundidade espiritual. O projeto inclui o app móvel (React Native/Expo) e um CMS Web (Next.js) para gerenciamento de conteúdo.
 
 ![Expo](https://img.shields.io/badge/Expo-54-black?logo=expo)
 ![React Native](https://img.shields.io/badge/React_Native-0.81-61DAFB?logo=react)
 ![Supabase](https://img.shields.io/badge/Supabase-2.x-3ECF8E?logo=supabase)
+![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)
 
 ---
 
-## Funcionalidades
+## 📱 App Móvel
 
-- **Hoje** — Lista de hábitos do dia, marcar conclusão, progresso e sequência (streak)
-- **Calendário** — Navegação mensal, indicador de conclusão por dia, hábitos da data selecionada
-- **Progresso** — Visões semanal, mensal e anual; gráficos, heatmap e resumo por hábito
-- **Criar/editar hábitos** — Nome, cor, ícone, frequência (diário, dias úteis, fins de semana, personalizado)
-- **Detalhe do hábito** — Streak, taxas de conclusão (7/30/365 dias), histórico
-- **Tema** — Modo claro e escuro
-- **Recuperação de senha** — "Esqueci a senha" no login → e-mail com link ou código de 6 dígitos → definir nova senha → aviso de sucesso → voltar ao login e entrar com a nova senha
-- **Sync** — Supabase (opcional); sem config, usa apenas AsyncStorage local
+Desenvolvido para ajudar usuários a cultivarem um tempo diário com Deus.
 
----
+### Funcionalidades
+- **Hoje**: Sessão devocional diária com cards interativos (Citação, Passagem, Reflexão, Oração).
+- **Semana**: Calendário visual de constância.
+- **Bíblia**: Leitor completo com versões NVI, RA e ACF (via ABíbliaDigital API), versículo do dia e busca.
+- **Séries**: Conteúdo temático para aprofundamento.
+- **Perfil**: Histórico de progresso e configurações.
 
-## Stack
-
-| Camada        | Tecnologia |
-|---------------|------------|
-| App           | Expo 54, React 19, React Native, expo-router |
-| Estado/Dados  | React Context + Supabase ou AsyncStorage |
-| Backend       | Supabase (PostgreSQL + REST API) |
-| UI            | React Native, Reanimated, Nunito, Ionicons |
+### Tecnologias
+- **Core**: React Native, Expo Router, TypeScript.
+- **UI**: Design system customizado (fontes serif premium + sans-serif), Lucide Icons.
+- **Dados**: Supabase (PostgreSQL), Drizzle ORM (schema), Context API (sessão).
+- **API**: Integração com ABíbliaDigital.
 
 ---
 
-## Pré-requisitos
+## 🖥️ CMS Web
 
+Painel administrativo para criar e gerenciar o conteúdo devocional que aparece no app.
+
+### Acesso
+- URL Local: `http://localhost:3000`
+- Login: Autenticação via Supabase (mesmos usuários admins).
+
+### Funcionalidades
+- **Dashboard**: Visão geral de séries, dias e blocos criados.
+- **Editor de Séries**: Criar/editar séries e gerenciar dias.
+- **Editor de Blocos**: Interface arrastar-e-soltar para montar a sessão devocional.
+  - Suporte a 8 tipos de blocos: Citação, Escritura, Reflexão, Oração, Respiração, Ação, Diário, Imagem.
+- **Publicação**: Controle de rascunho/publicado.
+
+---
+
+## 🚀 Instalação e Execução
+
+### Pré-requisitos
 - Node.js 18+
-- npm ou yarn
-- Conta Supabase (cloud ou auto-hospedado) para sync na nuvem
+- Conta no Supabase
 
----
+### 1. Configuração do Ambiente
 
-## Instalação
+Copie o `.env.example` para `.env` na raiz e em `cms/.env.local`:
 
 ```bash
-git clone <url-do-repositorio>
-cd habit-tracker
+# App Móvel (.env)
+EXPO_PUBLIC_SUPABASE_URL="sua_url"
+EXPO_PUBLIC_SUPABASE_ANON_KEY="sua_chave"
+EXPO_PUBLIC_BIBLE_API_TOKEN="(opcional para uso ilimitado)"
+
+# CMS (cms/.env.local)
+NEXT_PUBLIC_SUPABASE_URL="sua_url"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="sua_chave"
+```
+
+### 2. Banco de Dados
+
+Rode as migrações SQL no Supabase (pasta `supabase/migrations`):
+1. `20260219000000_devotional_tables.sql` (Estrutura)
+2. `20260219100000_seed_devotional_data.sql` (Dados iniciais)
+
+### 3. Rodar o Projeto
+
+**Mobile:**
+```bash
 npm install
-```
-
-### Variáveis de ambiente
-
-Copie o exemplo e preencha com as credenciais do seu projeto Supabase:
-
-```bash
-cp .env.example .env
-```
-
-Edite o `.env`:
-
-- `EXPO_PUBLIC_SUPABASE_URL` — URL do projeto (ex.: `https://xxx.supabase.co`)
-- `EXPO_PUBLIC_SUPABASE_ANON_KEY` — Chave anon em **Settings → API** no Dashboard
-
-Alternativamente, o app aceita `VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY`.
-
-**Sem estas variáveis**, o app funciona apenas com dados locais (AsyncStorage).
-
-### Banco de dados (Supabase)
-
-Execute a migração no **SQL Editor** do Supabase:
-
-- Ficheiro: `supabase/migrations/20250212000000_habitflow_tables.sql`
-
-Ou, com a connection string no `.env`:
-
-```bash
-npm run supabase:migrate
-```
-
----
-
-## Scripts
-
-| Comando | Descrição |
-|---------|-----------|
-| `npm start` | Inicia o Expo (dev) |
-| `npm run supabase:migrate` | Aplica a migração no Supabase (requer `SUPABASE_DB_URL`) |
-| `npm run test-supabase` | Testa conexão e CRUD no Supabase |
-| `npm run lint` | Executa o ESLint |
-| `npm run lint:fix` | Corrige automaticamente o que for possível |
-| `npm run build:web` | Exporta a app para web (pasta `dist/`) — para deploy na Vercel |
-| `npm run build:apk` | Gera APK Android via EAS Build |
-| `npm run update:preview` | Publica atualização OTA no canal `preview` (ver [BUILD-APK.md](docs/BUILD-APK.md#atualizações-ota-eas-update)) |
-
----
-
-## Executar o projeto
-
-```bash
 npx expo start
 ```
 
-- **Web:** `w` no terminal ou abra o URL indicado  
-- **Android:** `a` ou escaneie o QR code  
-- **iOS:** `i` (simulador) ou escaneie o QR code  
-
----
-
-## Estrutura do projeto
-
-```
-habit-tracker/
-├── app/                 # Rotas (expo-router)
-│   ├── (auth)/          # Login, cadastro, esqueci a senha, nova senha
-│   ├── (tabs)/          # Hoje, Calendário, Progresso
-│   ├── habit-form.tsx    # Criar/editar hábito
-│   └── habit-detail.tsx  # Detalhe e estatísticas
-├── lib/
-│   ├── habits-context.tsx  # Estado e lógica (Supabase ou AsyncStorage)
-│   ├── AuthContext.tsx      # Autenticação e flag de recuperação de senha
-│   ├── supabase.ts         # Cliente Supabase
-│   └── useTheme.ts
-├── components/
-├── constants/
-├── supabase/
-│   └── migrations/       # SQL das tabelas
-├── scripts/
-│   ├── test-supabase.js      # Teste de conexão
-│   ├── run-supabase-migration.js
-│   └── setup-expo-env.js
-└── docs/                 # Documentação
+**CMS:**
+```bash
+cd cms
+npm install
+npm run dev
 ```
 
 ---
 
-## Documentação
+## 📦 Deploy
 
-- [Supabase — configuração e migração](docs/SUPABASE.md)
-- [Supabase self-hosted — Auth e recuperação de senha](docs/supabase-selfhosted-auth-config.md)
-- [Supabase self-hosted — CORS no Kong (erro ao chamar API a partir da web)](docs/supabase-kong-cors.md)
-- [Guia de desenvolvimento](docs/DESENVOLVIMENTO.md)
-- [Gerar APK (Android)](docs/BUILD-APK.md)
-- [Atualizações OTA (EAS Update)](docs/EAS-UPDATE.md)
-- [Deploy Web na Vercel](docs/DEPLOY-VERCEL.md)
+### Expo (Mobile)
+```bash
+eas build --platform android --profile preview
+# ou
+eas update
+```
+
+### Vercel (CMS)
+O diretório `cms/` pode ser implantado diretamente na Vercel como um projeto Next.js padrão.
 
 ---
+
+## 📂 Estrutura
+
+```
+devotional-app/
+├── app/                 # Rotas do Mobile (Expo Router)
+├── components/          # Componentes UI Mobile (Blocks, Cards)
+├── lib/                 # Lógica de negócios (Services, Contexts)
+├── cms/                 # Projeto Web Next.js (Admin)
+│   ├── app/             # Rotas do CMS
+│   └── lib/             # Lógica e Tipos do CMS
+├── constants/           # Design System (Tokens)
+├── supabase/            # Migrações e Seeds
+└── scripts/             # Utilitários de verificação
+```
 
 ## Licença
-
-Projeto privado.
+Privado.

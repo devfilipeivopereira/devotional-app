@@ -64,10 +64,10 @@ export default function LoginScreen() {
         showsVerticalScrollIndicator={false}
       >
         <Text style={[styles.title, { color: theme.text, fontFamily: "Nunito_700Bold" }]}>
-          HabitFlow
+          Devocional
         </Text>
         <Text style={[styles.subtitle, { color: theme.textSecondary, fontFamily: "Nunito_400Regular" }]}>
-          Entre para acessar seus hábitos
+          Entre para acessar seus devocionais
         </Text>
 
         <TextInput
@@ -110,7 +110,7 @@ export default function LoginScreen() {
         <Pressable
           onPress={handleLogin}
           disabled={loading}
-          style={[styles.button, { backgroundColor: palette.teal }]}
+          style={[styles.button, { backgroundColor: palette.coral }]}
         >
           {loading ? (
             <ActivityIndicator color="#fff" />
@@ -125,7 +125,7 @@ export default function LoginScreen() {
           onPress={() => router.push("/(auth)/forgot-password")}
           style={styles.linkWrap}
         >
-          <Text style={[styles.link, { color: palette.teal, fontFamily: "Nunito_600SemiBold" }]}>
+          <Text style={[styles.link, { color: palette.coral, fontFamily: "Nunito_600SemiBold" }]}>
             Esqueci a senha
           </Text>
         </Pressable>
@@ -136,7 +136,7 @@ export default function LoginScreen() {
         >
           <Text style={[styles.link, { color: theme.textSecondary, fontFamily: "Nunito_400Regular" }]}>
             Não tem conta?{" "}
-            <Text style={[styles.linkBold, { color: palette.teal, fontFamily: "Nunito_600SemiBold" }]}>
+            <Text style={[styles.linkBold, { color: palette.coral, fontFamily: "Nunito_600SemiBold" }]}>
               Cadastre-se
             </Text>
           </Text>

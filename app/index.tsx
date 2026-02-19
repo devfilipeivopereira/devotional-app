@@ -4,7 +4,7 @@ import { router } from "expo-router";
 import { useAuth } from "@/lib/AuthContext";
 import { isSupabaseConfigured } from "@/lib/supabase";
 
-const SPLASH_BG = "#120b2d";
+const SPLASH_BG = "#1A1A2E";
 
 export default function IndexScreen() {
   const { session, isLoading, pendingPasswordReset } = useAuth();
@@ -28,7 +28,7 @@ export default function IndexScreen() {
 
   return (
     <View style={[StyleSheet.absoluteFill, styles.splash]}>
-      <Text style={styles.splashTitle}>HabitFlow</Text>
+      <Text style={styles.splashTitle}>Devocional</Text>
     </View>
   );
 }

@@ -1,14 +1,18 @@
 const palette = {
+  // Core brand colors — Glorify-inspired warm tones
   coral: "#FF6B5A",
   coralLight: "#FF8A7D",
-  teal: "#2EC4B6",
-  tealLight: "#4DD9CC",
-  tealDark: "#1A9E92",
-  navy: "#1B2838",
+  warmBeige: "#FFF8F0",
+  warmBeigeDark: "#FAF5EE",
+  cardBeige: "#F5EDE4",
+
+  // Dark mode
+  navy: "#1A1A2E",
   navyLight: "#243447",
   darkBg: "#0F1923",
   cardDark: "#1B2838",
-  cardLight: "#F7F8FA",
+
+  // Neutrals
   white: "#FFFFFF",
   offWhite: "#F2F3F5",
   gray100: "#E8EAED",
@@ -19,36 +23,25 @@ const palette = {
   gray600: "#374151",
   textDark: "#111827",
   textLight: "#F9FAFB",
+  black: "#1A1A1A",
+
+  // Semantic
   success: "#34D399",
   warning: "#FBBF24",
   danger: "#EF4444",
 };
 
-const habitColors = [
-  "#FF6B5A",
-  "#2EC4B6",
-  "#FBBF24",
-  "#8B5CF6",
-  "#3B82F6",
-  "#EC4899",
-  "#F97316",
-  "#10B981",
-  "#06B6D4",
-  "#EF4444",
-];
-
 export default {
   palette,
-  habitColors,
   light: {
     text: palette.textDark,
     textSecondary: palette.gray400,
-    background: palette.offWhite,
-    card: palette.white,
-    tint: palette.teal,
-    tintSecondary: palette.coral,
+    background: palette.warmBeige,
+    card: palette.cardBeige,
+    tint: palette.coral,
+    tintSecondary: palette.coralLight,
     tabIconDefault: palette.gray300,
-    tabIconSelected: palette.teal,
+    tabIconSelected: palette.coral,
     border: palette.gray100,
   },
   dark: {
@@ -56,10 +49,10 @@ export default {
     textSecondary: palette.gray300,
     background: palette.darkBg,
     card: palette.cardDark,
-    tint: palette.teal,
-    tintSecondary: palette.coral,
+    tint: palette.coral,
+    tintSecondary: palette.coralLight,
     tabIconDefault: palette.gray500,
-    tabIconSelected: palette.teal,
+    tabIconSelected: palette.coral,
     border: palette.navyLight,
   },
 };

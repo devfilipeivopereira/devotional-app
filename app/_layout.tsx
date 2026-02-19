@@ -18,7 +18,7 @@ import Colors from "@/constants/colors";
 
 SplashScreen.preventAutoHideAsync();
 
-const RESET_PASSWORD_SCHEME = "myapp://reset-password";
+const RESET_PASSWORD_SCHEME = "devocional://reset-password";
 const WEB_APP_BASE =
   (typeof process !== "undefined" && process.env?.EXPO_PUBLIC_APP_URL) ||
   "https://habitos.encorajar.com.br";
@@ -97,7 +97,7 @@ function LoadingSplash() {
       <View style={styles.splashContent}>
         <Text style={styles.splashTitle}>Devocional</Text>
       </View>
-      <Text style={styles.splashFooter}>By "@filipeivopereira"</Text>
+      <Text style={styles.splashFooter}>By @filipeivopereira</Text>
     </View>
   );
 }

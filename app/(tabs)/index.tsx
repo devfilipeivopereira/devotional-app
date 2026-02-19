@@ -7,12 +7,14 @@ import {
     SafeAreaView,
     Pressable,
     ActivityIndicator,
+    Alert,
 } from "react-native";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "@/lib/useTheme";
 import { useDevotionalSession } from "@/lib/devotional-context";
 import Colors from "@/constants/colors";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 
 const WEEKDAYS = ["D", "S", "T", "Q", "Q", "S", "S"];
 
@@ -81,6 +83,39 @@ export default function TodayScreen() {
         loadTodaySeries();
     }, []);
 
+    const startTodaySession = async (seriesId?: string) => {
+        if (!isSupabaseConfigured) {
+            router.push("/session" as any);
+            return;
+        }
+
+        let query = supabase
+            .from("devotional_days")
+            .select("id")
+            .eq("is_published", true)
+            .order("created_at", { ascending: true })
+            .limit(1);
+
+        if (seriesId) {
+            query = query.eq("series_id", seriesId);
+        }
+
+        const { data, error } = await query;
+
+        if (error) {
+            Alert.alert("Erro", "Não foi possível carregar o devocional de hoje.");
+            return;
+        }
+
+        const dayId = data?.[0]?.id;
+        if (!dayId) {
+            Alert.alert("Sem conteúdo", "Nenhum dia publicado foi encontrado.");
+            return;
+        }
+
+        router.push({ pathname: "/session", params: { dayId } } as any);
+    };
+
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
             <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -117,11 +152,7 @@ export default function TodayScreen() {
                     <Pressable
                         key={index}
                         style={[styles.card, { backgroundColor: theme.card }]}
-                        onPress={() => {
-                            // If there are series with days, start a session
-                            // For now, navigate to show the block type preview
-                            router.push("/session" as any);
-                        }}
+                        onPress={() => startTodaySession()}
                     >
                         <View style={styles.cardRow}>
                             <Text style={styles.cardIcon}>{section.icon}</Text>
@@ -153,6 +184,7 @@ export default function TodayScreen() {
                             <Pressable
                                 key={series.id}
                                 style={[styles.seriesCard, { backgroundColor: theme.card }]}
+                                onPress={() => startTodaySession(series.id)}
                             >
                                 <View style={[styles.seriesImagePlaceholder, { backgroundColor: Colors.palette.coral + "20" }]}>
                                     <Text style={{ fontSize: 32 }}>📚</Text>

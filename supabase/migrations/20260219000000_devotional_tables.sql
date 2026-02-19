@@ -84,14 +84,17 @@ ALTER TABLE public.devotional_days ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.devotional_blocks ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.devotional_media ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Public read access for series" ON public.devotional_series;
 CREATE POLICY "Public read access for series"
   ON public.devotional_series FOR SELECT
   USING (is_published = TRUE);
 
+DROP POLICY IF EXISTS "Public read access for days" ON public.devotional_days;
 CREATE POLICY "Public read access for days"
   ON public.devotional_days FOR SELECT
   USING (is_published = TRUE);
 
+DROP POLICY IF EXISTS "Public read access for blocks" ON public.devotional_blocks;
 CREATE POLICY "Public read access for blocks"
   ON public.devotional_blocks FOR SELECT
   USING (
@@ -101,6 +104,7 @@ CREATE POLICY "Public read access for blocks"
     )
   );
 
+DROP POLICY IF EXISTS "Public read access for media" ON public.devotional_media;
 CREATE POLICY "Public read access for media"
   ON public.devotional_media FOR SELECT
   USING (TRUE);
@@ -109,11 +113,13 @@ CREATE POLICY "Public read access for media"
 ALTER TABLE public.devotional_progress ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.devotional_journal ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can manage own progress" ON public.devotional_progress;
 CREATE POLICY "Users can manage own progress"
   ON public.devotional_progress FOR ALL
   USING (auth.uid() = user_id)
   WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can manage own journal" ON public.devotional_journal;
 CREATE POLICY "Users can manage own journal"
   ON public.devotional_journal FOR ALL
   USING (auth.uid() = user_id)

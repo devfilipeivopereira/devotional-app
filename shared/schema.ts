@@ -111,8 +111,8 @@ export interface QuoteContent {
 export interface ScriptureContent {
   book: string;
   chapter: string;
-  verseStart: string;
-  verseEnd: string;
+  verse_start: string;
+  verse_end: string;
   text: string;
 }
 
@@ -125,13 +125,13 @@ export interface PrayerContent {
 }
 
 export interface BreathingContent {
-  durationSeconds: number;
+  duration_seconds: number;
   instructions: string;
 }
 
 export interface ActionContent {
   text: string;
-  callToAction: string;
+  call_to_action: string;
   link?: string;
 }
 
@@ -140,6 +140,6 @@ export interface JournalPromptContent {
 }
 
 export interface ImageMeditationContent {
-  imageId: string;
+  image_id: string;
   caption: string;
 }

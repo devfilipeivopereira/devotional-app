@@ -19,8 +19,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR">
-      <body className={inter.variable} style={{ fontFamily: "var(--font-inter), sans-serif" }}>
+    <html lang="pt-BR" suppressHydrationWarning>
+      <body
+        suppressHydrationWarning
+        className={inter.variable}
+        style={{ fontFamily: "var(--font-inter), sans-serif" }}
+      >
         {children}
       </body>
     </html>

@@ -1,145 +1,158 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 interface Stats {
-    series: number;
-    days: number;
-    blocks: number;
-    published: number;
+  series: number;
+  days: number;
+  blocks: number;
+  published: number;
 }
 
+const BLOCK_TYPES = [
+  { icon: "QT", label: "Citacao" },
+  { icon: "SC", label: "Escritura" },
+  { icon: "RF", label: "Reflexao" },
+  { icon: "PR", label: "Oracao" },
+  { icon: "BR", label: "Respiracao" },
+  { icon: "AC", label: "Acao" },
+  { icon: "JR", label: "Diario" },
+  { icon: "IM", label: "Imagem" },
+];
+
 export default function DashboardPage() {
-    const [stats, setStats] = useState<Stats>({
-        series: 0,
-        days: 0,
-        blocks: 0,
-        published: 0,
-    });
-    const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState<Stats>({
+    series: 0,
+    days: 0,
+    blocks: 0,
+    published: 0,
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-    useEffect(() => {
-        loadStats();
-    }, []);
+  useEffect(() => {
+    loadStats();
+  }, []);
 
-    const loadStats = async () => {
-        try {
-            const [seriesRes, daysRes, blocksRes, publishedRes] = await Promise.all([
-                supabase
-                    .from("devotional_series")
-                    .select("id", { count: "exact", head: true }),
-                supabase
-                    .from("devotional_days")
-                    .select("id", { count: "exact", head: true }),
-                supabase
-                    .from("devotional_blocks")
-                    .select("id", { count: "exact", head: true }),
-                supabase
-                    .from("devotional_series")
-                    .select("id", { count: "exact", head: true })
-                    .eq("is_published", true),
-            ]);
+  const loadStats = async () => {
+    try {
+      const statsPromise = Promise.all([
+        supabase.from("devotional_series").select("id", { count: "exact", head: true }),
+        supabase.from("devotional_days").select("id", { count: "exact", head: true }),
+        supabase.from("devotional_blocks").select("id", { count: "exact", head: true }),
+        supabase
+          .from("devotional_series")
+          .select("id", { count: "exact", head: true })
+          .eq("is_published", true),
+      ]);
 
-            setStats({
-                series: seriesRes.count || 0,
-                days: daysRes.count || 0,
-                blocks: blocksRes.count || 0,
-                published: publishedRes.count || 0,
-            });
-        } catch (err) {
-            console.error("Error loading stats:", err);
-        } finally {
-            setLoading(false);
-        }
-    };
+      const [seriesRes, daysRes, blocksRes, publishedRes] = await Promise.race([
+        statsPromise,
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout ao carregar estatisticas")), 8000)
+        ),
+      ]);
 
-    if (loading) {
-        return (
-            <div className="loading">
-                <div className="spinner" />
-                Carregando...
-            </div>
-        );
+      setStats({
+        series: seriesRes.count || 0,
+        days: daysRes.count || 0,
+        blocks: blocksRes.count || 0,
+        published: publishedRes.count || 0,
+      });
+    } catch (err) {
+      console.error("Error loading stats:", err);
+      setError((err as Error).message || "Erro ao carregar dados");
+    } finally {
+      setLoading(false);
     }
+  };
 
+  if (loading) {
     return (
-        <div>
-            <div className="page-header">
-                <div>
-                    <h1 className="page-title">Dashboard</h1>
-                    <p className="page-subtitle">
-                        Visão geral do conteúdo devocional
-                    </p>
-                </div>
-            </div>
-
-            <div className="stats-grid">
-                <div className="stat-card">
-                    <div className="stat-value">{stats.series}</div>
-                    <div className="stat-label">Séries</div>
-                </div>
-                <div className="stat-card">
-                    <div className="stat-value">{stats.published}</div>
-                    <div className="stat-label">Publicadas</div>
-                </div>
-                <div className="stat-card">
-                    <div className="stat-value">{stats.days}</div>
-                    <div className="stat-label">Dias</div>
-                </div>
-                <div className="stat-card">
-                    <div className="stat-value">{stats.blocks}</div>
-                    <div className="stat-label">Blocos</div>
-                </div>
-            </div>
-
-            <div className="card">
-                <h3 className="card-title">🚀 Bem-vindo ao CMS</h3>
-                <p style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
-                    Use o menu lateral para gerenciar suas séries devocionais. Cada série
-                    contém dias, e cada dia contém blocos de conteúdo que os usuários
-                    irão percorrer na sessão devocional.
-                </p>
-                <div style={{ marginTop: 16 }}>
-                    <h4 style={{ fontSize: 14, fontWeight: 700, marginBottom: 8 }}>
-                        Tipos de Blocos Disponíveis:
-                    </h4>
-                    <div
-                        style={{
-                            display: "grid",
-                            gridTemplateColumns: "repeat(4, 1fr)",
-                            gap: 8,
-                        }}
-                    >
-                        {[
-                            { icon: "💬", label: "Citação" },
-                            { icon: "📖", label: "Escritura" },
-                            { icon: "💭", label: "Reflexão" },
-                            { icon: "🙏", label: "Oração" },
-                            { icon: "🌬️", label: "Respiração" },
-                            { icon: "⚡", label: "Ação" },
-                            { icon: "📝", label: "Diário" },
-                            { icon: "🖼️", label: "Meditação" },
-                        ].map((block) => (
-                            <div
-                                key={block.label}
-                                style={{
-                                    background: "var(--coral-light)",
-                                    borderRadius: 8,
-                                    padding: "10px 12px",
-                                    textAlign: "center",
-                                    fontSize: 12,
-                                    fontWeight: 600,
-                                }}
-                            >
-                                <span style={{ fontSize: 20 }}>{block.icon}</span>
-                                <br />
-                                {block.label}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-        </div>
+      <div className="loading">
+        <div className="spinner" />
+        Carregando...
+      </div>
     );
+  }
+
+  if (error) {
+    return (
+      <div className="loading" style={{ minHeight: "50vh", gap: 12, flexDirection: "column" }}>
+        <div style={{ fontSize: 16, fontWeight: 600 }}>Erro no dashboard</div>
+        <div style={{ color: "var(--text-muted)", maxWidth: 520, textAlign: "center" }}>{error}</div>
+        <button className="btn btn-secondary" onClick={loadStats}>
+          Tentar novamente
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <div className="page-header">
+        <div>
+          <h1 className="page-title">Dashboard</h1>
+          <p className="page-subtitle">Visao geral do conteudo devocional</p>
+        </div>
+      </div>
+
+      <section className="dashboard-hero card">
+        <div>
+          <p className="eyebrow">Painel</p>
+          <h2 className="hero-title">Gestao simples, publicacao rapida</h2>
+          <p className="hero-text">
+            Crie series, organize dias e publique experiencias devocionais com um fluxo limpo e objetivo.
+          </p>
+        </div>
+      </section>
+
+      <div className="stats-grid modern-stats">
+        <div className="stat-card kpi-card">
+          <div className="kpi-icon">SR</div>
+          <div>
+            <div className="stat-value">{stats.series}</div>
+            <div className="stat-label">Series</div>
+          </div>
+        </div>
+        <div className="stat-card kpi-card">
+          <div className="kpi-icon">PB</div>
+          <div>
+            <div className="stat-value">{stats.published}</div>
+            <div className="stat-label">Publicadas</div>
+          </div>
+        </div>
+        <div className="stat-card kpi-card">
+          <div className="kpi-icon">DY</div>
+          <div>
+            <div className="stat-value">{stats.days}</div>
+            <div className="stat-label">Dias</div>
+          </div>
+        </div>
+        <div className="stat-card kpi-card">
+          <div className="kpi-icon">BL</div>
+          <div>
+            <div className="stat-value">{stats.blocks}</div>
+            <div className="stat-label">Blocos</div>
+          </div>
+        </div>
+      </div>
+
+      <section className="card">
+        <h3 className="card-title">Tipos de bloco</h3>
+        <p className="page-subtitle" style={{ marginBottom: 16 }}>
+          Biblioteca padrao para montar cada sessao devocional.
+        </p>
+        <div className="feature-grid">
+          {BLOCK_TYPES.map((block) => (
+            <div key={block.label} className="feature-chip">
+              <span className="feature-icon">{block.icon}</span>
+              <span>{block.label}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
 }

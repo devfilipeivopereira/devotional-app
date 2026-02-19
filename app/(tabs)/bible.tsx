@@ -273,7 +273,7 @@ export default function BibleScreen() {
                             VERSÍCULO DO DIA
                         </Text>
                         <Text style={[styles.verseOfDayText, { color: theme.text }]}>
-                            "{verseOfDay.text}"
+                            {'"'}{verseOfDay.text}{'"'}
                         </Text>
                         <Text style={[styles.verseOfDayRef, { color: theme.textSecondary }]}>
                             — {verseOfDay.book.name} {verseOfDay.chapter}:{verseOfDay.number}

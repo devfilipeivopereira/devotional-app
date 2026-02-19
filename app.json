@@ -48,7 +48,7 @@
         "origin": "https://replit.com/"
       },
       "eas": {
-        "projectId": "4822ed61-8ab3-40a4-b37f-b35848301c11"
+        "projectId": "6282bfe2-f9c9-4df0-ae46-7c5f24397eb8"
       }
     },
     "owner": "filipeivopereiras-organization",
@@ -56,7 +56,7 @@
       "policy": "appVersion"
     },
     "updates": {
-      "url": "https://u.expo.dev/4822ed61-8ab3-40a4-b37f-b35848301c11"
+      "url": "https://u.expo.dev/6282bfe2-f9c9-4df0-ae46-7c5f24397eb8"
     }
   }
 }

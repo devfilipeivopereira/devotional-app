@@ -341,6 +341,7 @@ export default function SeriesDetailPage() {
             day_number: nextNumber,
             title: dayForm.title,
             description: dayForm.description || null,
+            is_published: true,
         });
 
         setDayForm({ title: "", description: "" });

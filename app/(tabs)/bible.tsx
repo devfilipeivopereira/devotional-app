@@ -35,6 +35,8 @@ export default function BibleScreen() {
     const [books, setBooks] = useState<BibleBook[]>([]);
     const [loadingBooks, setLoadingBooks] = useState(true);
     const [version, setVersion] = useState<BibleVersionId>("nvi");
+    const [booksError, setBooksError] = useState<string | null>(null);
+    const [chapterError, setChapterError] = useState<string | null>(null);
 
     // Selected state
     const [selectedBook, setSelectedBook] = useState<BibleBook | null>(null);
@@ -44,6 +46,7 @@ export default function BibleScreen() {
 
     // Verse of the day
     const [verseOfDay, setVerseOfDay] = useState<BibleRandomVerseResponse | null>(null);
+    const [verseOfDayError, setVerseOfDayError] = useState<string | null>(null);
 
     useEffect(() => {
         loadBooks();
@@ -52,36 +55,41 @@ export default function BibleScreen() {
 
     const loadBooks = async () => {
         setLoadingBooks(true);
+        setBooksError(null);
         try {
             const data = await getBooks();
             setBooks(data);
         } catch (err) {
             console.error("Error loading books:", err);
-            // Fallback: use static list
+            setBooksError("Nao foi possivel carregar os livros da Biblia.");
             setBooks([]);
         } finally {
             setLoadingBooks(false);
         }
     };
 
-    const loadVerseOfDay = async () => {
+    const loadVerseOfDay = async (forcedVersion?: BibleVersionId) => {
+        setVerseOfDayError(null);
         try {
-            const verse = await getRandomVerse(version);
+            const verse = await getRandomVerse(forcedVersion ?? version);
             setVerseOfDay(verse);
         } catch (err) {
             console.error("Error loading verse of day:", err);
+            setVerseOfDayError("Nao foi possivel carregar o versiculo do dia.");
         }
     };
 
     const loadChapter = useCallback(
         async (book: BibleBook, chapter: number) => {
             setLoadingVerses(true);
+            setChapterError(null);
             try {
                 const data = await getChapter(book.abbrev.pt, chapter, version);
                 setVerses(data.verses);
             } catch (err) {
                 console.error("Error loading chapter:", err);
                 setVerses([]);
+                setChapterError("Falha ao carregar capitulo. Tente novamente.");
             } finally {
                 setLoadingVerses(false);
             }
@@ -150,6 +158,18 @@ export default function BibleScreen() {
                     </View>
                 ) : (
                     <ScrollView contentContainerStyle={styles.readingContent}>
+                        {chapterError ? (
+                            <View style={[styles.errorCard, { backgroundColor: Colors.palette.coral + "15" }]}>
+                                <Text style={[styles.errorText, { color: theme.text }]}>{chapterError}</Text>
+                                <Pressable
+                                    onPress={() => loadChapter(selectedBook, selectedChapter)}
+                                    style={[styles.retryBtn, { backgroundColor: Colors.palette.coral }]}
+                                >
+                                    <Text style={styles.retryBtnText}>Tentar novamente</Text>
+                                </Pressable>
+                            </View>
+                        ) : null}
+
                         {verses.map((verse) => (
                             <Text key={verse.number} style={[styles.verseText, { color: theme.text }]}>
                                 <Text style={[styles.verseNumber, { color: Colors.palette.coral }]}>
@@ -246,8 +266,7 @@ export default function BibleScreen() {
                             key={v.id}
                             onPress={() => {
                                 setVersion(v.id);
-                                // Reload verse of day with new version
-                                getRandomVerse(v.id).then(setVerseOfDay).catch(() => { });
+                                loadVerseOfDay(v.id);
                             }}
                             style={[
                                 styles.versionBtn,
@@ -280,6 +299,9 @@ export default function BibleScreen() {
                         </Text>
                     </View>
                 )}
+                {verseOfDayError ? (
+                    <Text style={[styles.inlineError, { color: Colors.palette.coral }]}>{verseOfDayError}</Text>
+                ) : null}
 
                 {/* Search */}
                 <View style={[styles.searchBar, { backgroundColor: theme.card }]}>
@@ -362,9 +384,22 @@ export default function BibleScreen() {
                 )}
 
                 {!loadingBooks && filteredBooks.length === 0 && (
-                    <Text style={[styles.emptyText, { color: theme.textSecondary }]}>
-                        Nenhum livro encontrado
-                    </Text>
+                    <View>
+                        <Text style={[styles.emptyText, { color: theme.textSecondary }]}>
+                            Nenhum livro encontrado
+                        </Text>
+                        {booksError ? (
+                            <View style={styles.center}>
+                                <Text style={[styles.inlineError, { color: Colors.palette.coral }]}>{booksError}</Text>
+                                <Pressable
+                                    onPress={loadBooks}
+                                    style={[styles.retryBtn, { backgroundColor: Colors.palette.coral, marginTop: 8 }]}
+                                >
+                                    <Text style={styles.retryBtnText}>Recarregar livros</Text>
+                                </Pressable>
+                            </View>
+                        ) : null}
+                    </View>
                 )}
             </ScrollView>
         </SafeAreaView>
@@ -486,6 +521,31 @@ const styles = StyleSheet.create({
         textAlign: "center",
         marginTop: 40,
         fontSize: 15,
+    },
+    inlineError: {
+        textAlign: "center",
+        fontSize: 13,
+        marginTop: 8,
+    },
+    errorCard: {
+        borderRadius: 12,
+        padding: 14,
+        marginBottom: 16,
+    },
+    errorText: {
+        fontSize: 14,
+        marginBottom: 10,
+    },
+    retryBtn: {
+        alignSelf: "flex-start",
+        borderRadius: 10,
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+    },
+    retryBtnText: {
+        color: "#fff",
+        fontSize: 12,
+        fontWeight: "700",
     },
 
     // Section

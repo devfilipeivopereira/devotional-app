@@ -8,9 +8,11 @@ import {
     Pressable,
     ActivityIndicator,
     Alert,
+    Platform,
 } from "react-native";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@/lib/useTheme";
 import { useDevotionalSession } from "@/lib/devotional-context";
 import Colors from "@/constants/colors";
@@ -77,6 +79,7 @@ const DAILY_SECTIONS: DevotionalCard[] = [
 
 export default function TodayScreen() {
     const { theme } = useTheme();
+    const insets = useSafeAreaInsets();
     const { todaySeries, loadTodaySeries, isLoadingSeries } = useDevotionalSession();
 
     useEffect(() => {
@@ -126,7 +129,12 @@ export default function TodayScreen() {
         <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 {/* Header */}
-                <View style={styles.headerRow}>
+                <View
+                    style={[
+                        styles.headerRow,
+                        { paddingTop: Platform.OS === "android" ? Math.max(insets.top, 8) + 6 : 0 },
+                    ]}
+                >
                     <View style={{ flex: 1 }}>
                         <Text style={[styles.dateText, { color: Colors.palette.coral }]}>
                             {new Date()

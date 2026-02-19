@@ -30,6 +30,13 @@ import {
 
 type ViewMode = "books" | "chapters" | "reading";
 
+function getSafeChapterCount(book: BibleBook | null): number {
+  if (!book) return 1;
+  const parsed = Number(book.chapters);
+  if (!Number.isFinite(parsed) || parsed < 1) return 1;
+  return Math.min(200, Math.floor(parsed));
+}
+
 export default function BibleScreen() {
   const { theme } = useTheme();
   const { user } = useAuth();
@@ -144,8 +151,8 @@ export default function BibleScreen() {
 
   const goToChapters = () => {
     if (!selectedBook) return;
-    const chapterCount = Number(selectedBook.chapters);
-    if (!Number.isFinite(chapterCount) || chapterCount < 1) {
+    const chapterCount = getSafeChapterCount(selectedBook);
+    if (chapterCount < 1) {
       return;
     }
     setViewMode("chapters");
@@ -373,7 +380,7 @@ export default function BibleScreen() {
                     </Text>
                   </Pressable>
                 )}
-                {selectedChapter < selectedBook.chapters && (
+                {selectedChapter < getSafeChapterCount(selectedBook) && (
                   <Pressable
                     onPress={() => handleChapterSelect(selectedChapter + 1)}
                     style={[styles.chapterNavBtn, { backgroundColor: theme.card, marginLeft: "auto" }]}
@@ -393,11 +400,7 @@ export default function BibleScreen() {
   }
 
   if (viewMode === "chapters" && selectedBook) {
-    const parsedChapterCount = Number(selectedBook.chapters);
-    const chapterCount =
-      Number.isFinite(parsedChapterCount) && parsedChapterCount > 0
-        ? Math.min(200, Math.floor(parsedChapterCount))
-        : 1;
+    const chapterCount = getSafeChapterCount(selectedBook);
     const chapters = Array.from({ length: chapterCount }, (_, index) => index + 1);
 
     return (
@@ -414,20 +417,17 @@ export default function BibleScreen() {
           SELECIONE O CAPITULO
         </Text>
 
-        <FlatList
-          data={chapters}
-          numColumns={5}
-          keyExtractor={(item) => String(item)}
-          contentContainerStyle={styles.chapterGrid}
-          renderItem={({ item }) => (
+        <ScrollView contentContainerStyle={styles.chapterGrid}>
+          {chapters.map((item) => (
             <Pressable
+              key={`${selectedBook.abbrev.pt}-${item}`}
               onPress={() => handleChapterSelect(item)}
               style={[styles.chapterCell, { backgroundColor: theme.card }]}
             >
               <Text style={[styles.chapterCellText, { color: theme.text }]}>{item}</Text>
             </Pressable>
-          )}
-        />
+          ))}
+        </ScrollView>
       </SafeAreaView>
     );
   }
@@ -703,7 +703,10 @@ const styles = StyleSheet.create({
     ...Typography.label,
   },
   chapterGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
     paddingHorizontal: 20,
+    paddingBottom: 24,
     gap: 8,
   },
   chapterCell: {

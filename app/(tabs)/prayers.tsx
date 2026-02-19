@@ -10,8 +10,11 @@ import {
   Modal,
   ActivityIndicator,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@/lib/useTheme";
 import Colors from "@/constants/colors";
 import { useAuth } from "@/lib/AuthContext";
@@ -38,15 +41,31 @@ function todayAsIsoDate() {
 export default function PrayersScreen() {
   const { theme } = useTheme();
   const { user } = useAuth();
+  const insets = useSafeAreaInsets();
 
   const [items, setItems] = React.useState<PrayerRequest[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [modalOpen, setModalOpen] = React.useState(false);
   const [saving, setSaving] = React.useState(false);
+  const [prayerTable, setPrayerTable] = React.useState<"prayer_requests" | "public_prayers">("prayer_requests");
 
   const [editingId, setEditingId] = React.useState<string | null>(null);
   const [requestText, setRequestText] = React.useState("");
   const [requestDate, setRequestDate] = React.useState(todayAsIsoDate());
+
+  const resolvePrayerTable = React.useCallback(async () => {
+    const primary = await supabase.from("prayer_requests").select("id").limit(1);
+    if (!primary.error) {
+      setPrayerTable("prayer_requests");
+      return "prayer_requests" as const;
+    }
+    const fallback = await supabase.from("public_prayers").select("id").limit(1);
+    if (!fallback.error) {
+      setPrayerTable("public_prayers");
+      return "public_prayers" as const;
+    }
+    return "prayer_requests" as const;
+  }, []);
 
   const loadRequests = React.useCallback(async () => {
     if (!isSupabaseConfigured || !user) {
@@ -54,8 +73,9 @@ export default function PrayersScreen() {
       return;
     }
     setLoading(true);
+    const table = await resolvePrayerTable();
     const { data, error } = await supabase
-      .from("prayer_requests")
+      .from(table)
       .select("*")
       .eq("user_id", user.id)
       .order("request_date", { ascending: false })
@@ -68,7 +88,7 @@ export default function PrayersScreen() {
       setItems((data ?? []) as PrayerRequest[]);
     }
     setLoading(false);
-  }, [user]);
+  }, [user, resolvePrayerTable]);
 
   React.useEffect(() => {
     loadRequests();
@@ -105,7 +125,7 @@ export default function PrayersScreen() {
     setSaving(true);
     if (editingId) {
       const { error } = await supabase
-        .from("prayer_requests")
+        .from(prayerTable)
         .update({
           request_text: requestText.trim(),
           request_date: requestDate,
@@ -119,7 +139,7 @@ export default function PrayersScreen() {
         return;
       }
     } else {
-      const { error } = await supabase.from("prayer_requests").insert({
+      const { error } = await supabase.from(prayerTable).insert({
         user_id: user.id,
         request_text: requestText.trim(),
         request_date: requestDate,
@@ -140,7 +160,7 @@ export default function PrayersScreen() {
     if (!user) return;
     const nextAnswered = !item.is_answered;
     const { error } = await supabase
-      .from("prayer_requests")
+      .from(prayerTable)
       .update({
         is_answered: nextAnswered,
         answered_at: nextAnswered ? new Date().toISOString() : null,
@@ -164,7 +184,7 @@ export default function PrayersScreen() {
         style: "destructive",
         onPress: async () => {
           const { error } = await supabase
-            .from("prayer_requests")
+            .from(prayerTable)
             .delete()
             .eq("id", item.id)
             .eq("user_id", user.id);
@@ -244,8 +264,21 @@ export default function PrayersScreen() {
       </Pressable>
 
       <Modal visible={modalOpen} transparent animationType="slide" onRequestClose={() => setModalOpen(false)}>
-        <View style={styles.modalOverlay}>
-          <View style={[styles.modalCard, { backgroundColor: theme.card }]}>
+        <KeyboardAvoidingView
+          style={styles.modalOverlay}
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          keyboardVerticalOffset={20}
+        >
+          <View
+            style={[
+              styles.modalCard,
+              {
+                backgroundColor: theme.card,
+                marginBottom: Math.max(insets.bottom, 12) + 12,
+                paddingBottom: Math.max(insets.bottom, 12) + 10,
+              },
+            ]}
+          >
             <Text style={[styles.modalTitle, { color: theme.text }]}>
               {editingId ? "Editar pedido" : "Novo pedido de oracao"}
             </Text>
@@ -287,7 +320,7 @@ export default function PrayersScreen() {
               </Pressable>
             </View>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
     </SafeAreaView>
   );
@@ -382,11 +415,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.35)",
     justifyContent: "flex-end",
+    paddingHorizontal: 12,
+    paddingTop: 36,
   },
   modalCard: {
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    padding: 16,
+    borderRadius: 20,
+    paddingTop: 18,
+    paddingHorizontal: 16,
+    minHeight: 420,
+    maxHeight: "88%",
   },
   modalTitle: {
     fontSize: 18,
@@ -412,13 +449,13 @@ const styles = StyleSheet.create({
   modalActions: {
     flexDirection: "row",
     justifyContent: "flex-end",
-    marginTop: 14,
+    marginTop: 18,
     gap: 10,
   },
   btn: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 10,
+    paddingHorizontal: 18,
+    paddingVertical: 12,
+    borderRadius: 12,
   },
   btnText: {
     fontSize: 14,

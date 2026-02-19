@@ -10,8 +10,11 @@ import {
   Modal,
   ActivityIndicator,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@/lib/useTheme";
 import Colors from "@/constants/colors";
 import { useAuth } from "@/lib/AuthContext";
@@ -49,6 +52,7 @@ function todayAsIsoDate() {
 export default function JournalScreen() {
   const { theme } = useTheme();
   const { user } = useAuth();
+  const insets = useSafeAreaInsets();
 
   const [activeTab, setActiveTab] = React.useState<TabKey>("highlights");
   const [loading, setLoading] = React.useState(true);
@@ -295,8 +299,21 @@ export default function JournalScreen() {
       )}
 
       <Modal visible={modalOpen} transparent animationType="slide" onRequestClose={() => setModalOpen(false)}>
-        <View style={styles.modalOverlay}>
-          <View style={[styles.modalCard, { backgroundColor: theme.card }]}>
+        <KeyboardAvoidingView
+          style={styles.modalOverlay}
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          keyboardVerticalOffset={20}
+        >
+          <View
+            style={[
+              styles.modalCard,
+              {
+                backgroundColor: theme.card,
+                marginBottom: Math.max(insets.bottom, 12) + 12,
+                paddingBottom: Math.max(insets.bottom, 12) + 10,
+              },
+            ]}
+          >
             <Text style={[styles.modalTitle, { color: theme.text }]}>
               {editingId ? "Editar anotação" : "Nova anotação"}
             </Text>
@@ -344,7 +361,7 @@ export default function JournalScreen() {
               </Pressable>
             </View>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
     </SafeAreaView>
   );
@@ -440,11 +457,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.35)",
     justifyContent: "flex-end",
+    paddingHorizontal: 12,
+    paddingTop: 36,
   },
   modalCard: {
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    padding: 16,
+    borderRadius: 20,
+    paddingTop: 18,
+    paddingHorizontal: 16,
+    minHeight: 440,
+    maxHeight: "88%",
   },
   modalTitle: {
     fontSize: 18,
@@ -470,13 +491,13 @@ const styles = StyleSheet.create({
   modalActions: {
     flexDirection: "row",
     justifyContent: "flex-end",
-    marginTop: 14,
+    marginTop: 18,
     gap: 10,
   },
   btn: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 10,
+    paddingHorizontal: 18,
+    paddingVertical: 12,
+    borderRadius: 12,
   },
   btnText: {
     fontSize: 14,

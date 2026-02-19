@@ -16,6 +16,7 @@
     "lint": "npx expo lint",
     "lint:fix": "npx expo lint --fix",
     "build:apk": "npx eas-cli build --platform android --profile preview",
+    "update:preview": "npx eas-cli update --channel preview --auto --non-interactive",
     "build:web": "npx expo export -p web",
     "android": "expo run:android",
     "ios": "expo run:ios"

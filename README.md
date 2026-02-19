@@ -90,6 +90,7 @@ npm run supabase:migrate
 | `npm run lint:fix` | Corrige automaticamente o que for possível |
 | `npm run build:web` | Exporta a app para web (pasta `dist/`) — para deploy na Vercel |
 | `npm run build:apk` | Gera APK Android via EAS Build |
+| `npm run update:preview` | Publica atualização OTA no canal `preview` (ver [BUILD-APK.md](docs/BUILD-APK.md#atualizações-ota-eas-update)) |
 
 ---
 
@@ -139,6 +140,7 @@ habit-tracker/
 - [Supabase self-hosted — CORS no Kong (erro ao chamar API a partir da web)](docs/supabase-kong-cors.md)
 - [Guia de desenvolvimento](docs/DESENVOLVIMENTO.md)
 - [Gerar APK (Android)](docs/BUILD-APK.md)
+- [Atualizações OTA (EAS Update)](docs/EAS-UPDATE.md)
 - [Deploy Web na Vercel](docs/DEPLOY-VERCEL.md)
 
 ---

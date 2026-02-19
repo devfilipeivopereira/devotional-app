@@ -87,13 +87,54 @@ O `.env` da raiz é usado quando roda `npx expo start`. No APK gerado por `prebu
 
 ---
 
+## Atualizações OTA (EAS Update)
+
+O APK gerado pelo EAS Build recebe **atualizações over-the-air** automaticamente. O app consulta os servidores da Expo ao abrir e baixa novas versões do código (JS/assets) sem precisar reinstalar.
+
+### Canal de updates
+
+O perfil `preview` em `eas.json` está configurado com **canal fixo `preview`**:
+
+```json
+"preview": {
+  "channel": "preview",
+  "distribution": "internal",
+  "android": { "buildType": "apk" }
+}
+```
+
+**Importante:** Todo APK gerado com `npm run build:apk` usa o canal `preview`. Para publicar atualizações, use sempre o mesmo canal.
+
+### Publicar uma atualização
+
+```bash
+npm run update:preview
+```
+
+Ou manualmente:
+
+```bash
+npx eas-cli update --channel preview --message "Descrição da alteração"
+```
+
+Os utilizadores com o app instalado recebem a atualização na próxima abertura (com internet).
+
+### Fluxo completo
+
+| Ação | Comando |
+|------|---------|
+| Gerar APK (primeira vez ou nova versão nativa) | `npm run build:apk` |
+| Publicar atualização OTA (código JS/assets) | `npm run update:preview` |
+
+---
+
 ## Resumo rápido (EAS)
 
 ```bash
 npm install -g eas-cli
 eas login
 eas build:configure
-eas build --platform android --profile preview
+npm run build:apk
 ```
 
 Descarregue o APK no link que aparecer e instale no Android.
